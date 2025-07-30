@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Racer</title>
+    <title>Cosmic Racer - Enhanced</title>
     <style>
         body {
             margin: 0;
@@ -13,7 +13,6 @@
             color: white;
         }
 
-        /* --- Screens (Start & Game Over) --- */
         .screen {
             position: absolute;
             width: 100%;
@@ -21,144 +20,215 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(to bottom, #000000, #110022);
+            background: linear-gradient(45deg, #000000, #110033, #220044);
             z-index: 100;
             text-align: center;
         }
         
         .content-box {
-            background: rgba(20, 20, 40, 0.9);
+            background: rgba(20, 20, 50, 0.95);
             padding: 40px;
             border-radius: 20px;
-            border: 1px solid #9933ff;
-            box-shadow: 0 0 30px rgba(153, 51, 255, 0.5);
+            border: 2px solid #9933ff;
+            box-shadow: 0 0 40px rgba(153, 51, 255, 0.6);
+            backdrop-filter: blur(10px);
         }
         
         h1 {
-            font-size: 48px;
+            font-size: 52px;
             margin: 0 0 30px 0;
             color: #cc99ff;
-            text-shadow: 0 0 20px rgba(204, 153, 255, 0.8);
+            text-shadow: 0 0 30px rgba(204, 153, 255, 1);
+            background: linear-gradient(45deg, #cc99ff, #ff99cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* --- Character Selection --- */
         .characters {
             display: flex;
-            gap: 20px;
-            margin: 20px 0;
+            gap: 25px;
+            margin: 25px 0;
             justify-content: center;
         }
         
         .character {
-            padding: 15px 25px;
-            font-size: 40px;
+            padding: 20px 30px;
+            font-size: 45px;
             cursor: pointer;
             border: 3px solid transparent;
-            border-radius: 10px;
+            border-radius: 15px;
             background: rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .character:hover::before {
+            left: 100%;
         }
         
         .character:hover {
-            transform: scale(1.2);
+            transform: scale(1.3) rotate(5deg);
             border-color: #9933ff;
-            box-shadow: 0 0 20px rgba(153, 51, 255, 0.8);
+            box-shadow: 0 0 30px rgba(153, 51, 255, 1);
         }
         
         .character.selected {
-            border-color: #9933ff;
-            transform: scale(1.1);
+            border-color: #ff6600;
+            transform: scale(1.2);
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.8);
         }
         
-        /* --- Buttons --- */
         button {
-            padding: 15px 40px;
-            font-size: 24px;
-            background: linear-gradient(45deg, #cc99ff, #6633cc);
+            padding: 18px 45px;
+            font-size: 26px;
+            background: linear-gradient(45deg, #cc99ff, #6633cc, #9966ff);
             border: none;
-            border-radius: 30px;
+            border-radius: 35px;
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
+            transition: all 0.4s;
+            margin: 15px 10px;
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.3s;
+        }
+        
+        button:hover::before {
+            left: 100%;
         }
         
         button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(153, 51, 255, 0.8);
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 10px 40px rgba(153, 51, 255, 0.8);
         }
 
-        /* --- In-Game UI --- */
         #ui {
             position: absolute;
             top: 20px;
             left: 20px;
             font-size: 18px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             z-index: 50;
         }
         
         .ui-element {
-            margin-bottom: 12px;
-            background: rgba(20, 20, 40, 0.8);
-            padding: 8px 15px;
-            border-radius: 20px;
-            min-width: 150px;
-            border: 1px solid #6633cc;
+            margin-bottom: 15px;
+            background: rgba(20, 20, 50, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            min-width: 180px;
+            border: 2px solid #6633cc;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
         }
 
-        /* --- UI Bars (Health/Boost) --- */
+        .ui-element:hover {
+            transform: scale(1.05);
+            border-color: #9933ff;
+        }
+
         .bar-container {
             width: 100%;
-            height: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            margin-top: 5px;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 7px;
+            margin-top: 8px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+            position: relative;
         }
 
         .bar-fill {
             height: 100%;
             width: 100%;
-            border-radius: 6px;
-            transition: width 0.2s ease-out;
+            border-radius: 7px;
+            transition: width 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
         }
 
-        #healthBar { background-color: #33ff66; }
-        #boostBar { background-color: #ffaa33; }
-        #bombRegenBar { background-color: #9933ff; } /* New: Bomb regen bar color */
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        #healthBar { 
+            background: linear-gradient(90deg, #ff3333, #33ff66);
+        }
+        #boostBar { 
+            background: linear-gradient(90deg, #ff6600, #ffaa33);
+        }
+        #bombRegenBar { 
+            background: linear-gradient(90deg, #6633cc, #9933ff);
+        }
         
-        /* --- Controls Info --- */
         #controls {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(20, 20, 40, 0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
+            background: rgba(20, 20, 50, 0.9);
+            padding: 15px 25px;
+            border-radius: 25px;
             font-size: 16px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             z-index: 50;
+            border: 2px solid #6633cc;
+            backdrop-filter: blur(5px);
         }
 
-        /* --- Leaderboard Styles --- */
         #leaderboard {
             margin-top: 30px;
-            width: 80%;
-            max-width: 400px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #6633cc;
+            width: 90%;
+            max-width: 450px;
+            background: rgba(0, 0, 20, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #6633cc;
+            backdrop-filter: blur(10px);
         }
 
         #leaderboard h2 {
             color: #cc99ff;
             margin-top: 0;
-            font-size: 28px;
-            text-shadow: 0 0 10px rgba(204, 153, 255, 0.5);
+            font-size: 32px;
+            text-shadow: 0 0 15px rgba(204, 153, 255, 0.8);
         }
 
         #leaderboard ol {
@@ -170,9 +240,15 @@
         #leaderboard li {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-            font-size: 18px;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        #leaderboard li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 10px;
         }
 
         #leaderboard li:last-child {
@@ -189,14 +265,14 @@
             top: 20px;
             right: 20px;
             font-size: 14px;
-            background: rgba(20, 20, 40, 0.8);
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #6633cc;
+            background: rgba(20, 20, 50, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid #6633cc;
             z-index: 50;
+            backdrop-filter: blur(5px);
         }
 
-        /* Ensure the canvas covers the entire screen */
         canvas {
             display: block;
             position: fixed;
@@ -204,19 +280,235 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1; /* Ensure it's above body background but below UI */
+            z-index: 1;
+            touch-action: none; /* Prevent default touch behaviors */
         }
         
         .hidden {
             display: none !important;
         }
+
+        /* Touch Controls */
+        .touch-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 40;
+            pointer-events: none;
+        }
+
+        .virtual-joystick {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            pointer-events: auto;
+            touch-action: none;
+        }
+
+        .joystick-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease;
+            pointer-events: none;
+        }
+
+        .touch-button {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            touch-action: manipulation;
+            user-select: none;
+            transition: all 0.1s ease;
+        }
+
+        .touch-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .boost-btn {
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            font-size: 20px;
+        }
+
+        .laser-btn {
+            bottom: 130px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            font-size: 18px;
+        }
+
+        .rocket-btn {
+            bottom: 30px;
+            right: 130px;
+            width: 70px;
+            height: 70px;
+            font-size: 18px;
+        }
+
+        .pause-btn {
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            font-size: 16px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .ui-element {
+                font-size: 14px;
+                padding: 8px 12px;
+                min-width: 120px;
+            }
+
+            .content-box {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .characters {
+                gap: 15px;
+            }
+
+            .character {
+                padding: 15px 20px;
+                font-size: 35px;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 20px;
+            }
+
+            #controls {
+                display: none; /* Hide keyboard controls on mobile */
+            }
+        }
+
+        .combo-display {
+            display: none;
+        }
+
+        .power-indicator {
+            position: absolute;
+            top: 200px;
+            left: 20px;
+            padding: 10px 15px;
+            background: rgba(255, 102, 0, 0.9);
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid #ff6600;
+            z-index: 55;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .achievement-popup {
+            position: absolute;
+            top: 30%;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6600, #ffaa00);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            border: 3px solid #ffdd00;
+            box-shadow: 0 0 30px rgba(255, 153, 0, 0.8);
+            z-index: 70;
+            animation: achievementSlide 4s ease-out forwards;
+            max-width: 300px;
+        }
+
+        @keyframes achievementSlide {
+            0% {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            15%, 85% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .wave-complete {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 25px rgba(0, 255, 136, 1);
+            z-index: 65;
+            animation: waveCompleteAnim 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes waveCompleteAnim {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+            70% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1) translateY(-80px);
+            }
+        }
     </style>
 </head>
-<body tabindex="0"> <!-- Added tabindex="0" to make body focusable -->
-    <!-- In-Game UI -->
+<body tabindex="0">
     <div id="ui" class="hidden">
         <div class="ui-element">Score: <span id="score">0</span></div>
         <div class="ui-element">Distance: <span id="distance">0</span>km</div>
+        <div class="ui-element">Wave: <span id="wave">1</span></div>
         <div class="ui-element">
             Hull Integrity
             <div class="bar-container"><div id="healthBar" class="bar-fill"></div></div>
@@ -226,208 +518,141 @@
             <div class="bar-container"><div id="boostBar" class="bar-fill"></div></div>
         </div>
         <div class="ui-element">
-            Bombs: <span id="bombStatus">Ready</span>
+            Rockets: <span id="bombStatus">Ready</span>
             <div class="bar-container"><div id="bombRegenBar" class="bar-fill"></div></div>
         </div>
     </div>
     
-    <!-- User ID Display -->
     <div id="userIdDisplay" class="hidden">
-        User ID: <span id="currentUserId">Loading...</span>
+        Session: <span id="currentUserId">Local Game</span>
     </div>
 
-    <!-- Controls Display -->
     <div id="controls" class="hidden">
-        🎮 Arrow Keys/WASD: Steer • Space: Thrusters • X: Fire • P: Pause • Z: Bomb
+        🎮 WASD/Arrows: Navigate • Space: Boost • X: Laser • Z: Rocket • P: Pause
     </div>
     
-    <!-- Start Screen -->
+    <!-- Touch Controls -->
+    <div id="touchControls" class="touch-controls hidden">
+        <div class="virtual-joystick" id="joystick">
+            <div class="joystick-knob" id="joystickKnob"></div>
+        </div>
+        
+        <div class="touch-button boost-btn" id="boostBtn">
+            🚀
+        </div>
+        
+        <div class="touch-button laser-btn" id="laserBtn">
+            ⚡
+        </div>
+        
+        <div class="touch-button rocket-btn" id="rocketBtn">
+            💥
+        </div>
+        
+        <div class="touch-button pause-btn" id="pauseBtn">
+            ⏸️
+        </div>
+    </div>
+    
     <div id="startScreen" class="screen">
         <div class="content-box">
-            <h1>🚀 Cosmic Racer 🌠</h1>
-            <p style="font-size: 20px;">Choose your ship:</p>
+            <h1>🚀 COSMIC RACER 🌠</h1>
+            <p style="font-size: 22px; margin-bottom: 20px;">Choose Your Starship</p>
             <div class="characters">
-                <div class="character" data-type="rocket">🚀</div>
-                <div class="character" data-type="ufo">🛸</div>
-                <div class="character" data-type="satellite">🛰️</div>
-                <div class="character" data-type="alien">👽</div>
+                <div class="character" data-type="rocket" title="Balanced Fighter">🚀</div>
+                <div class="character" data-type="ufo" title="Agile Scout">🛸</div>
+                <div class="character" data-type="satellite" title="Tech Specialist">🛰️</div>
+                <div class="character" data-type="alien" title="Advanced Craft">👽</div>
             </div>
-            <button id="startButton">Launch!</button>
+            <button id="startButton">🚀 LAUNCH MISSION 🚀</button>
         </div>
     </div>
 
-    <!-- Game Over Screen -->
     <div id="gameOverScreen" class="screen hidden">
         <div class="content-box">
-            <h1>Mission Failed</h1>
-            <p style="font-size: 22px;">Final Score: <span id="finalScore">0</span></p>
+            <h1>Mission Complete</h1>
+            <p style="font-size: 26px;">Final Score: <span id="finalScore">0</span></p>
+            <p style="font-size: 20px;">Waves Completed: <span id="finalWave">0</span></p>
             <div id="leaderboard">
-                <h2>Leaderboard</h2>
-                <p id="leaderboardStatus">Loading scores...</p>
+                <h2>Top Pilots</h2>
+                <p id="leaderboardStatus">Local scores only</p>
                 <ol id="leaderboardList"></ol>
             </div>
-            <button id="restartButton">Relaunch</button>
+            <button id="restartButton">🔄 Retry Mission</button>
         </div>
     </div>
 
-    <!-- Pause Screen (NEW) -->
     <div id="pauseScreen" class="screen hidden">
         <div class="content-box">
-            <h1>Game Paused</h1>
-            <button id="resumeButton">Resume Game</button>
-            <button id="pauseRestartButton" style="margin-top: 15px;">Restart Mission</button>
-            <button id="mainMenuButton" style="margin-top: 15px;">Back to Main Menu</button>
+            <h1>Mission Paused</h1>
+            <button id="resumeButton">▶️ Resume</button>
+            <button id="pauseRestartButton">🔄 Restart</button>
+            <button id="mainMenuButton">🏠 Main Menu</button>
         </div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <!-- Firebase SDK Imports -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global Firebase variables (accessible from the main script)
-        window.firebaseApp = null;
-        window.db = null;
-        window.auth = null;
-        window.userId = null;
-
-        // Initialize Firebase
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
-        if (Object.keys(firebaseConfig).length > 0) {
-            window.firebaseApp = initializeApp(firebaseConfig);
-            window.db = getFirestore(window.firebaseApp);
-            window.auth = getAuth(window.firebaseApp);
-
-            onAuthStateChanged(window.auth, async (user) => {
-                if (user) {
-                    window.userId = user.uid;
-                    document.getElementById('currentUserId').textContent = window.userId;
-                } else {
-                    // Sign in anonymously if no user is authenticated
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(window.auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(window.auth);
-                        }
-                    } catch (error) {
-                        console.error("Firebase authentication error:", error);
-                        document.getElementById('currentUserId').textContent = "Auth Error";
-                    }
-                }
-                document.getElementById('userIdDisplay').classList.remove('hidden');
-            });
-        } else {
-            console.warn("Firebase config not found. Leaderboard functionality will be disabled.");
-            document.getElementById('currentUserId').textContent = "N/A (No Firebase)";
-            document.getElementById('userIdDisplay').classList.remove('hidden');
-        }
-    </script>
     <script>
-        // Game state variables
+        // Enhanced Game Variables
         let scene, camera, renderer;
         let player, playerType = 'rocket';
         let playerVelocity = { x: 0, y: 0 };
-        let obstacles = [], collectibles = [];
-        let score = 0, distance = 0;
-        let speed = 0.8, baseSpeed = 0.8, boostSpeed = 0;
-        
-        // Game State Variables
-        let health = 100;
-        let boost = 100;
-        let bombs = 1; // Start with 1 bomb
-        let bombReady = true; // Is bomb available to use?
-        let bombCooldownTimer = 0; // Timer for post-use cooldown
-        let bombRegenTimer = 0; // Timer for regeneration progress
-        const BOMB_USE_COOLDOWN = 3; // Seconds after use before regeneration starts
-        const BOMB_REGEN_DURATION = 15; // Seconds to regenerate one bomb
-        
-        let isShieldActive = false;
-        let shieldTimeout;
-        let gameState = 'menu'; // 'menu', 'playing', 'paused', 'gameOver'
-        
+        let obstacles = [], collectibles = [], lasers = [], alienShips = [], rockets = [];
+        let score = 0, distance = 0, maxCombo = 0;
+        let speed = 1.0, baseSpeed = 1.0, boostSpeed = 0;
+        let health = 100, boost = 100, bombs = 1;
+        let bombReady = true, bombCooldownTimer = 0, bombRegenTimer = 0;
+        let isShieldActive = false, shieldTimeout;
+        let gameState = 'menu';
         let clock = new THREE.Clock();
         const keys = {};
-        let sounds;
-        let starfieldLayers = []; // Changed to array for multiple layers
+        let sounds, starfieldLayers = [], distantPlanets = [], nebulaPlanes = [], distantAsteroidFields = [];
         let isBoostingSoundPlaying = false;
-
-        // Shooting variables
-        let lasers = [];
-        let rockets = []; // New: Array to hold rocket objects
-        let laserCooldown = 0;
-
-        // Graphical enhancement variables
-        let distantPlanets = [];
-        let nebulaPlanes = []; // To store references to nebula planes
-        let distantAsteroidFields = []; // New: To store distant asteroid fields
-        let explosionSoundCooldown = 0; // Cooldown for explosion sound
-        let dynamicLight; // New: For dynamic lighting
-        let secondaryDynamicLight; // New: For additional dynamic lighting
-
-        // Alien variables
-        let alienShips = [];
-        // Increased alien spawn frequency
-        let alienSpawnCooldown = 3; // Time in seconds before next alien can spawn (reduced for more aliens)
-        let currentAlienSpawnTimer = alienSpawnCooldown;
-        const ALIEN_LASER_SPEED = 50; // Slower alien lasers
-        const ALIEN_SHOOT_COOLDOWN = 2.0; // Seconds between alien shots (increased)
-
-        // New Alien Type 2 Constants (distinct properties)
-        const ALIEN_TYPE2_HEALTH = 2; // Requires two hits
-        const ALIEN_TYPE2_COLOR = 0x990099; // Magenta
-        const ALIEN_TYPE2_LASER_COLOR = 0xffff00; // Yellow
-        const ALIEN_TYPE2_SPEED_FACTOR = 0.8; // Slower than Type 1
-        const ALIEN_TYPE2_SHOOT_COOLDOWN = 3.0; // Slower shooting
-
-        // New Alien Type 3 Constants (Fast but fragile and erratic)
-        const ALIEN_TYPE3_HEALTH = 1; // Fragile
-        const ALIEN_TYPE3_COLOR = 0x00ffff; // Cyan
-        const ALIEN_TYPE3_LASER_COLOR = 0xff00ff; // Pink
-        const ALIEN_TYPE3_SPEED_FACTOR = 1.8; // Very fast
-        const ALIEN_TYPE3_SHOOT_COOLDOWN = 1.0; // Shoots faster
-        const ALIEN_TYPE3_TARGET_OFFSET_RANGE = 25; // Larger range for target offset to make its movement more erratic.
-        const ALIEN_TYPE3_APPROACH_SPEED_FACTOR = 0.05; // Less precise approach, contributing to crashes.
-
-        // New Alien Type 4 Constants (Tanky and Slow)
-        const ALIEN_TYPE4_HEALTH = 5; // Very high health
-        const ALIEN_TYPE4_COLOR = 0x800080; // Purple
-        const ALIEN_TYPE4_LASER_COLOR = 0x00ff00; // Green
-        const ALIEN_TYPE4_SPEED_FACTOR = 0.5; // Very slow
-        const ALIEN_TYPE4_SHOOT_COOLDOWN = 4.0; // Very slow shooting
-        const ALIEN_TYPE4_TARGET_OFFSET_RANGE = 5; // More precise targeting
-        const ALIEN_TYPE4_APPROACH_SPEED_FACTOR = 0.02; // Very slow approach
-
-        // Power-up variables
-        let isTripleShotActive = false;
-        let tripleShotTimeout = null;
-        const TRIPLE_SHOT_DURATION = 7; // seconds
-        let isSpeedBoostActive = false;
-        let speedBoostTimeout = null;
-        const SPEED_BOOST_DURATION = 5; // seconds
-        const SPEED_BOOST_FACTOR = 0.7; // How much extra speed to add (e.g., 0.5 means 50% faster base speed)
-        const HEALTH_PACK_AMOUNT = 30; // Health restored by health pack
-        // All collectible types, including crystal, are now part of random spawning
-        const COLLECTIBLE_TYPES = ['crystal', 'crystal', 'crystal', 'shield', 'health', 'boost', 'tripleShot', 'speedBoost']; // Increased crystal probability
-        const ROCKET_EXPLOSION_RADIUS = 50; // Radius of rocket explosion (renamed from BOMB_RADIUS)
-        const ROCKET_SPEED = 150; // Speed of the rocket
-        const ROCKET_FUSE_DISTANCE = 100; // Distance rocket travels before exploding
-
-        // Path variables are no longer used for specific crystal paths, but for general spread
-        const RANDOM_SPAWN_AREA_RADIUS = 80; // Max distance from center for random spawns
+        let laserCooldown = 0, explosionSoundCooldown = 0;
+        let dynamicLight, secondaryDynamicLight;
+        let alienSpawnCooldown = 4, currentAlienSpawnTimer = 4;
         
-        // Spawning control variables (increased frequency for density)
-        let randomAsteroidSpawnTimer = 0;
-        const RANDOM_ASTEROID_SPAWN_INTERVAL = 0.03; // Even more frequent asteroid spawns
-        let powerupSpawnTimer = 0; // Timer for power-up spawning
-        // Increased crystal spawn frequency
-        const POWERUP_SPAWN_INTERVAL = 0.1; // Even more frequent power-up spawns
+        // Enhanced Features
+        let powerUps = { tripleShot: false, speedBoost: false, rapidFire: false, magneticField: false, timeWarp: false };
+        let powerUpTimers = {};
+        let particleSystems = [];
+        
+        // Advanced Features
+        let waveNumber = 1;
+        let enemiesInWave = 0;
+        let waveBonus = 0;
+        let achievementUnlocked = [];
+        let streakCounter = 0;
+        let perfectWave = true;
+        let specialEffects = [];
 
+        // Touch controls
+        let touchControls = {
+            joystick: { active: false, x: 0, y: 0 },
+            boost: false,
+            laser: false,
+            rocket: false
+        };
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Constants
+        const BOMB_USE_COOLDOWN = 3;
+        const BOMB_REGEN_DURATION = 12;
+        const ROCKET_EXPLOSION_RADIUS = 60;
+        const ROCKET_SPEED = 120;
+        const ROCKET_FUSE_DISTANCE = 80;
+        const COLLECTIBLE_TYPES = ['crystal', 'crystal', 'shield', 'health', 'boost', 'tripleShot', 'speedBoost', 'rapidFire', 'magneticField', 'timeWarp'];
+
+        // Achievement System
+        const ACHIEVEMENTS = {
+            firstKill: { name: "First Blood", desc: "Destroy your first enemy", unlocked: false },
+            wave5: { name: "Survivor", desc: "Complete 5 waves", unlocked: false },
+            perfectWave: { name: "Flawless", desc: "Complete a wave without taking damage", unlocked: false },
+            distance100: { name: "Explorer", desc: "Travel 100km", unlocked: false },
+            score10k: { name: "Ace Pilot", desc: "Score 10,000 points", unlocked: false },
+            streak25: { name: "Destroyer", desc: "Destroy 25 enemies in one game", unlocked: false }
+        };
 
         // DOM Elements
         const startScreen = document.getElementById('startScreen');
@@ -435,14 +660,7 @@
         const pauseScreen = document.getElementById('pauseScreen');
         const ui = document.getElementById('ui');
         const controls = document.getElementById('controls');
-        const startButton = document.getElementById('startButton');
-        const restartButton = document.getElementById('restartButton');
-        const leaderboardList = document.getElementById('leaderboardList');
-        const leaderboardStatus = document.getElementById('leaderboardStatus');
-
-        const resumeButton = document.getElementById('resumeButton');
-        const pauseRestartButton = document.getElementById('pauseRestartButton');
-        const mainMenuButton = document.getElementById('mainMenuButton');
+        const touchControlsElement = document.getElementById('touchControls');
 
         // Event Listeners
         document.querySelectorAll('.character').forEach(char => {
@@ -453,32 +671,21 @@
             });
         });
 
-        startButton.addEventListener('click', startGame);
-        restartButton.addEventListener('click', restartGame);
-        
-        // Pause screen button listeners
-        resumeButton.addEventListener('click', togglePause);
-        pauseRestartButton.addEventListener('click', () => {
-            togglePause(); // Unpause first if paused
+        document.getElementById('startButton').addEventListener('click', startGame);
+        document.getElementById('restartButton').addEventListener('click', restartGame);
+        document.getElementById('resumeButton').addEventListener('click', togglePause);
+        document.getElementById('pauseRestartButton').addEventListener('click', () => {
+            if (gameState === 'paused') togglePause();
             restartGame();
         });
-        mainMenuButton.addEventListener('click', showStartScreen);
+        document.getElementById('mainMenuButton').addEventListener('click', showStartScreen);
 
-        document.querySelector('[data-type="rocket"]').click(); // Select rocket by default
-        
-        // Global Keydown/Keyup listeners (moved outside init)
         window.addEventListener('keydown', (e) => { 
             keys[e.key.toLowerCase()] = true; 
-            if (e.key === ' ' || e.key === 'x' || e.key === 'z') e.preventDefault(); // Added 'z'
-            // Changed pause key to 'p'
-            if (e.key === 'p') {
-                console.log("P key pressed. Calling togglePause(). Current gameState:", gameState); // Debug log
-                togglePause();
-            }
+            if (['Space', 'x', 'z', 'p'].includes(e.code) || e.key === ' ') e.preventDefault();
+            if (e.key === 'p' && gameState !== 'menu') togglePause();
         });
-        window.addEventListener('keyup', (e) => { 
-            keys[e.key.toLowerCase()] = false; 
-        });
+        window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
 
         function initSounds() {
             sounds = {
@@ -487,140 +694,239 @@
                 damage: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.2 } }).toDestination(),
                 boost: new Tone.NoiseSynth({ noise: { type: 'white' }, envelope: { attack: 0.01, decay: 0.15, sustain: 0, release: 0.1 } }).toDestination(),
                 laser: new Tone.Synth({ oscillator: { type: 'fmsine', modulationIndex: 10 }, envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.1 } }).toDestination(),
-                alienLaser: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.2 } }).toDestination(), // New alien laser sound
                 explosion: new Tone.NoiseSynth({ noise: { type: 'pink' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(),
-                powerup: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0.05, release: 0.1 } }).toDestination(), // New powerup sound
-                bomb: new Tone.NoiseSynth({ noise: { type: 'brown' }, envelope: { attack: 0.01, decay: 0.8, sustain: 0, release: 0.5 } }).toDestination() // Changed 'brownian' to 'brown'
+                powerup: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.05, sustain: 0.05, release: 0.1 } }).toDestination(),
+                combo: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.2 } }).toDestination(),
+                rocket: new Tone.NoiseSynth({ noise: { type: 'brown' }, envelope: { attack: 0.01, decay: 0.8, sustain: 0, release: 0.5 } }).toDestination()
             };
-            sounds.collect.volume.value = -6;
-            sounds.shield.volume.value = -6;
-            sounds.damage.volume.value = -6;
-            sounds.boost.volume.value = -10;
-            sounds.laser.volume.value = -12;
-            sounds.alienLaser.volume.value = -10; // Alien laser volume
-            sounds.explosion.volume.value = -4;
-            sounds.powerup.volume.value = -8;
-            sounds.bomb.volume.value = -2; // Bomb sound volume
+            
+            // Set volumes
+            Object.keys(sounds).forEach(key => {
+                sounds[key].volume.value = key === 'boost' ? -12 : (key === 'laser' ? -10 : -6);
+            });
+        }
+
+        function setupTouchControls() {
+            const joystick = document.getElementById('joystick');
+            const joystickKnob = document.getElementById('joystickKnob');
+            const boostBtn = document.getElementById('boostBtn');
+            const laserBtn = document.getElementById('laserBtn');
+            const rocketBtn = document.getElementById('rocketBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+
+            // Virtual joystick
+            let joystickCenter = { x: 0, y: 0 };
+            let joystickRadius = 60;
+
+            function updateJoystickCenter() {
+                const rect = joystick.getBoundingClientRect();
+                joystickCenter.x = rect.left + rect.width / 2;
+                joystickCenter.y = rect.top + rect.height / 2;
+            }
+
+            function handleJoystickStart(e) {
+                e.preventDefault();
+                updateJoystickCenter();
+                touchControls.joystick.active = true;
+                handleJoystickMove(e);
+            }
+
+            function handleJoystickMove(e) {
+                if (!touchControls.joystick.active) return;
+                e.preventDefault();
+
+                const touch = e.touches ? e.touches[0] : e;
+                const deltaX = touch.clientX - joystickCenter.x;
+                const deltaY = touch.clientY - joystickCenter.y;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                if (distance <= joystickRadius) {
+                    touchControls.joystick.x = deltaX / joystickRadius;
+                    touchControls.joystick.y = -deltaY / joystickRadius; // Invert Y
+                    joystickKnob.style.transform = `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`;
+                } else {
+                    const angle = Math.atan2(deltaY, deltaX);
+                    const limitedX = Math.cos(angle) * joystickRadius;
+                    const limitedY = Math.sin(angle) * joystickRadius;
+                    touchControls.joystick.x = limitedX / joystickRadius;
+                    touchControls.joystick.y = -limitedY / joystickRadius; // Invert Y
+                    joystickKnob.style.transform = `translate(-50%, -50%) translate(${limitedX}px, ${limitedY}px)`;
+                }
+            }
+
+            function handleJoystickEnd(e) {
+                e.preventDefault();
+                touchControls.joystick.active = false;
+                touchControls.joystick.x = 0;
+                touchControls.joystick.y = 0;
+                joystickKnob.style.transform = 'translate(-50%, -50%)';
+            }
+
+            // Joystick events
+            joystick.addEventListener('touchstart', handleJoystickStart);
+            joystick.addEventListener('touchmove', handleJoystickMove);
+            joystick.addEventListener('touchend', handleJoystickEnd);
+            joystick.addEventListener('touchcancel', handleJoystickEnd);
+
+            // Mouse events for desktop testing
+            joystick.addEventListener('mousedown', handleJoystickStart);
+            window.addEventListener('mousemove', handleJoystickMove);
+            window.addEventListener('mouseup', handleJoystickEnd);
+
+            // Button events
+            function setupButton(button, controlName) {
+                function start(e) {
+                    e.preventDefault();
+                    touchControls[controlName] = true;
+                }
+                function end(e) {
+                    e.preventDefault();
+                    touchControls[controlName] = false;
+                }
+
+                button.addEventListener('touchstart', start);
+                button.addEventListener('touchend', end);
+                button.addEventListener('touchcancel', end);
+                button.addEventListener('mousedown', start);
+                button.addEventListener('mouseup', end);
+                button.addEventListener('mouseleave', end);
+            }
+
+            setupButton(boostBtn, 'boost');
+            setupButton(laserBtn, 'laser');
+            setupButton(rocketBtn, 'rocket');
+
+            // Pause button (single tap)
+            pauseBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (gameState !== 'menu') togglePause();
+            });
+            pauseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (gameState !== 'menu') togglePause();
+            });
+
+            // Prevent context menu on long press
+            document.addEventListener('contextmenu', (e) => {
+                if (isMobile) e.preventDefault();
+            });
+
+            // Prevent zoom on double tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', (e) => {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
 
         function startGame() {
-            console.log("startGame called.");
             startScreen.classList.add('hidden');
-            gameOverScreen.classList.add('hidden'); // Ensure game over screen is hidden
-            pauseScreen.classList.add('hidden'); // Ensure pause screen is hidden
+            gameOverScreen.classList.add('hidden');
+            pauseScreen.classList.add('hidden');
             ui.classList.remove('hidden');
-            controls.classList.remove('hidden');
+            
+            // Show appropriate controls based on device
+            if (isMobile) {
+                touchControlsElement.classList.remove('hidden');
+                controls.classList.add('hidden');
+            } else {
+                touchControlsElement.classList.add('hidden');
+                controls.classList.remove('hidden');
+            }
+            
+            // Show appropriate controls based on device
+            if (isMobile) {
+                touchControlsElement.classList.remove('hidden');
+                controls.classList.add('hidden');
+            } else {
+                touchControlsElement.classList.add('hidden');
+                controls.classList.remove('hidden');
+            }
             gameState = 'playing';
             
-            init(); // Initialize Three.js basic scene and renderer
-            initSounds(); // Initialize sounds
+            resetGameState();
+            init();
+            initSounds();
+            createWorldElements();
             
-            // Reset bomb state for new game
-            bombs = 1;
-            bombReady = true;
-            bombCooldownTimer = 0;
-            bombRegenTimer = 0;
-
-            // Reset path variables (no longer used for path, but for general random spread)
-            randomAsteroidSpawnTimer = 0; // Reset random asteroid timer
-            powerupSpawnTimer = 0; // Reset power-up timer
-
-            // Resume Tone.js context when game starts
             if (Tone.context.state !== 'running') {
                 Tone.context.resume();
             }
-
-            // Now that basic Three.js is set up, create game-specific elements
-            createWorldElements(); // This calls createPlayer()
             
-            // Initial spawn of random asteroids and power-ups to fill the visible area
-            // Increased initial count for a fuller screen
-            for (let i = 0; i < 200; i++) { // Increased initial asteroids for more density
-                createRandomAsteroid(player.position.z - (Math.random() * 450) - 50); // From -50 to -500
-            }
-            for (let i = 0; i < 50; i++) { // Increased initial power-ups (including crystals) for more density
-                spawnRandomPowerup(player.position.z - (Math.random() * 450) - 50); // From -50 to -500
-            }
+            populateInitialWorld();
+            animate();
+        }
 
-            animate(); // Start the animation loop AFTER world elements are created
-            console.log("Game started, animate loop should be running.");
+        function resetGameState() {
+            score = 0; distance = 0; maxCombo = 0;
+            health = 100; boost = 100; bombs = 1;
+            bombReady = true; bombCooldownTimer = 0; bombRegenTimer = 0;
+            playerVelocity = { x: 0, y: 0 };
+            speed = 1.0; baseSpeed = 1.0; boostSpeed = 0;
+            isShieldActive = false;
+            clearTimeout(shieldTimeout);
+            explosionSoundCooldown = 0;
+            currentAlienSpawnTimer = alienSpawnCooldown;
+            
+            // Reset advanced features
+            waveNumber = 1;
+            enemiesInWave = 0;
+            waveBonus = 0;
+            streakCounter = 0;
+            perfectWave = true;
+            specialEffects = [];
+            
+            // Reset power-ups
+            powerUps = { tripleShot: false, speedBoost: false, rapidFire: false, magneticField: false, timeWarp: false };
+            Object.keys(powerUpTimers).forEach(key => clearTimeout(powerUpTimers[key]));
+            powerUpTimers = {};
         }
 
         async function restartGame() {
-            // Clear all objects from the scene
-            while(scene.children.length > 0){ 
-                scene.remove(scene.children[0]); 
-            }
-            obstacles = []; collectibles = []; lasers = []; alienShips = []; rockets = []; // Clear rockets too
-            distantPlanets = []; nebulaPlanes = []; distantAsteroidFields = []; // Clear graphical elements too
-            starfieldLayers = []; // Clear starfield layers
-
-            score = 0; distance = 0; health = 100; boost = 100;
-            bombs = 1; // Reset bombs to 1
-            bombReady = true;
-            bombCooldownTimer = 0;
-            bombRegenTimer = 0;
-
-            // Reset timers
-            randomAsteroidSpawnTimer = 0;
-            powerupSpawnTimer = 0;
-
-            playerVelocity = { x: 0, y: 0 }; // Reset player velocity
-            speed = 0.8; baseSpeed = 0.8; boostSpeed = 0;
-            isShieldActive = false;
-            clearTimeout(shieldTimeout);
-            explosionSoundCooldown = 0; // Reset sound cooldown
-            currentAlienSpawnTimer = alienSpawnCooldown; // Reset alien spawn timer
-
-            // Reset power-up states
-            isTripleShotActive = false;
-            if (tripleShotTimeout) clearTimeout(tripleShotTimeout);
-            isSpeedBoostActive = false;
-            if (speedBoostTimeout) clearTimeout(speedBoostTimeout);
-
-
-            // Re-initialize Three.js before creating world elements
-            init(); 
-            createWorldElements(); // Re-create the world elements
+            clearScene();
+            resetGameState();
+            init();
+            createWorldElements();
+            populateInitialWorld();
             
-            // Initial spawn of random asteroids and power-ups to fill the visible area
-            for (let i = 0; i < 200; i++) { // Increased initial asteroids for more density
-                createRandomAsteroid(player.position.z - (Math.random() * 450) - 50); 
-            }
-            for (let i = 0; i < 50; i++) { // Increased initial power-ups (including crystals) for more density
-                spawnRandomPowerup(player.position.z - (Math.random() * 450) - 50); 
-            }
-
             gameOverScreen.classList.add('hidden');
-            pauseScreen.classList.add('hidden'); // Ensure pause screen is hidden
+            pauseScreen.classList.add('hidden');
             ui.classList.remove('hidden');
             controls.classList.remove('hidden');
             
             gameState = 'playing';
-            animate(); // Restart animation loop
+            animate();
         }
 
-        // Function to show the start screen
+        function clearScene() {
+            while(scene.children.length > 0) { 
+                scene.remove(scene.children[0]); 
+            }
+            obstacles = []; collectibles = []; lasers = []; alienShips = []; rockets = [];
+            distantPlanets = []; starfieldLayers = []; particleSystems = []; nebulaPlanes = []; distantAsteroidFields = [];
+        }
+
         function showStartScreen() {
             gameState = 'menu';
             gameOverScreen.classList.add('hidden');
             pauseScreen.classList.add('hidden');
             ui.classList.add('hidden');
             controls.classList.add('hidden');
+            touchControlsElement.classList.add('hidden');
             startScreen.classList.remove('hidden');
 
-            // Dispose of Three.js scene and renderer to free up resources
             if (renderer) {
                 renderer.dispose();
-                // Ensure the canvas element is removed from the DOM
                 if (renderer.domElement.parentNode) {
                     renderer.domElement.parentNode.removeChild(renderer.domElement);
                 }
-                renderer = null; // Set to null so init() will re-create
+                renderer = null;
                 scene = null;
                 camera = null;
             }
-            // Suspend Tone.js context if it's active
             if (Tone.context.state !== 'suspended') {
                 Tone.context.suspend();
             }
@@ -630,190 +936,253 @@
             gameState = 'gameOver';
             ui.classList.add('hidden');
             controls.classList.add('hidden');
-            pauseScreen.classList.add('hidden'); // Ensure pause screen is hidden
+            touchControlsElement.classList.add('hidden');
+            pauseScreen.classList.add('hidden');
+            
             document.getElementById('finalScore').textContent = Math.floor(score);
+            document.getElementById('finalWave').textContent = waveNumber - 1;
             gameOverScreen.classList.remove('hidden');
 
-            // Suspend Tone.js context
             if (Tone.context.state !== 'suspended') {
                 Tone.context.suspend();
             }
-
-            // Submit and fetch leaderboard scores
-            if (window.db && window.userId) {
-                await submitScore(Math.floor(score));
-                await fetchLeaderboard();
-            } else {
-                leaderboardStatus.textContent = "Leaderboard not available (Firebase not initialized).";
-            }
         }
 
-        // Function to toggle pause state
         function togglePause() {
-            console.log("togglePause called. Current gameState:", gameState);
             if (gameState === 'playing') {
                 gameState = 'paused';
                 pauseScreen.classList.remove('hidden');
                 ui.classList.add('hidden');
                 controls.classList.add('hidden');
-                console.log("Game paused. Pause screen visible. UI hidden.");
+                touchControlsElement.classList.add('hidden');
                 if (Tone.context.state !== 'suspended') {
                     Tone.context.suspend();
-                    console.log("Tone context suspended.");
                 }
             } else if (gameState === 'paused') {
                 gameState = 'playing';
                 pauseScreen.classList.add('hidden');
                 ui.classList.remove('hidden');
-                controls.classList.remove('hidden');
-                console.log("Game unpaused. Pause screen hidden. UI visible.");
+                
+                // Show appropriate controls based on device
+                if (isMobile) {
+                    touchControlsElement.classList.remove('hidden');
+                    controls.classList.add('hidden');
+                } else {
+                    touchControlsElement.classList.add('hidden');
+                    controls.classList.remove('hidden');
+                }
                 if (Tone.context.state !== 'running') {
                     Tone.context.resume();
-                    console.log("Tone context resumed.");
                 }
-                animate(); // Resume animation loop
+                animate();
             }
         }
-
-
-        async function submitScore(finalScore) {
-            try {
-                const scoresCollection = window.db.collection(`/artifacts/${__app_id}/public/data/leaderboard`);
-                await scoresCollection.add({
-                    userId: window.userId,
-                    score: finalScore,
-                    timestamp: new Date()
-                });
-                console.log("Score submitted successfully!");
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                leaderboardStatus.textContent = "Error submitting score.";
-            }
-        }
-
-        async function fetchLeaderboard() {
-            leaderboardStatus.textContent = "Loading scores...";
-            leaderboardList.innerHTML = ''; // Clear previous list
-            try {
-                const scoresCollection = window.db.collection(`/artifacts/${__app_id}/public/data/leaderboard`);
-                const q = scoresCollection.orderBy("score", "desc").limit(10);
-                const querySnapshot = await q.get();
-
-                if (querySnapshot.empty) {
-                    leaderboardStatus.textContent = "No scores yet. Be the first!";
-                    return;
-                }
-
-                leaderboardStatus.textContent = ""; // Clear loading status
-                querySnapshot.forEach((doc, index) => {
-                    const data = doc.data();
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<span>${index + 1}. ${data.userId.substring(0, 8)}...</span> <span>${data.score}</span>`;
-                    leaderboardList.appendChild(listItem);
-                });
-            } catch (e) {
-                console.error("Error fetching documents: ", e);
-                leaderboardStatus.textContent = "Error loading leaderboard.";
-            }
-        }
-
 
         function init() {
-            console.log("init called - setting up Three.js basics.");
-            // Ensure renderer is always created and sized correctly
             if (renderer) {
-                // If renderer already exists, just update its size and aspect ratio
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
             } else {
-                // Create new renderer, scene, camera if they don't exist
                 scene = new THREE.Scene();
-                scene.fog = new THREE.FogExp2(0x110022, 0.005);
+                scene.fog = new THREE.FogExp2(0x110033, 0.004);
                 
                 camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-                camera.position.set(0, 5, 15);
+                camera.position.set(0, 8, 20);
                 
                 renderer = new THREE.WebGLRenderer({ antialias: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
                 document.body.appendChild(renderer.domElement);
-                console.log("Renderer appended. Size:", window.innerWidth, "x", window.innerHeight);
 
                 window.addEventListener('resize', onWindowResize);
             }
         }
 
         function createWorldElements() {
-            console.log("createWorldElements called.");
-            // Clear existing scene objects (except for the camera which is managed by init)
-            const objectsToRemove = scene.children.filter(obj => obj !== camera);
-            objectsToRemove.forEach(obj => scene.remove(obj));
+            clearScene();
 
-            obstacles = []; collectibles = []; lasers = []; alienShips = []; rockets = [];
-            distantPlanets = []; nebulaPlanes = []; distantAsteroidFields = [];
-            starfieldLayers = [];
-
-            // Add lights to the scene
-            const ambientLight = new THREE.AmbientLight(0x604080, 0.7);
+            // Enhanced lighting
+            const ambientLight = new THREE.AmbientLight(0x604080, 0.8);
             scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-            directionalLight.position.set(10, 20, 5);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(15, 25, 10);
+            directionalLight.castShadow = true;
             scene.add(directionalLight);
 
-            dynamicLight = new THREE.PointLight(0xffccaa, 0.8, 200);
-            dynamicLight.position.set(0, 20, 0); 
+            dynamicLight = new THREE.PointLight(0xffccaa, 1.0, 250);
+            dynamicLight.position.set(0, 25, 0);
             scene.add(dynamicLight);
 
-            secondaryDynamicLight = new THREE.PointLight(0xaaffcc, 0.5, 150);
-            secondaryDynamicLight.position.set(50, -30, 0);
+            secondaryDynamicLight = new THREE.PointLight(0xaaffcc, 0.6, 180);
+            secondaryDynamicLight.position.set(60, -40, 0);
             scene.add(secondaryDynamicLight);
 
-            createBackground();
-            createPlayer(); // Player must be created before nextPathSegmentZ is set
-            
-            console.log("Game world elements created. Player position:", player.position);
+            createEnhancedBackground();
+            createPlayer();
         }
-        
+
+        function createEnhancedBackground() {
+            // Multiple starfield layers with enhanced effects
+            const createStars = (count, size, range, color, depth, speedFactor) => {
+                const starGeometry = new THREE.BufferGeometry();
+                const starPositions = [];
+                const starColors = [];
+                
+                for (let i = 0; i < count; i++) {
+                    starPositions.push(
+                        THREE.MathUtils.randFloatSpread(range),
+                        THREE.MathUtils.randFloatSpread(range),
+                        THREE.MathUtils.randFloatSpread(range) - depth
+                    );
+                    
+                    const intensity = 0.5 + Math.random() * 0.5;
+                    starColors.push(intensity, intensity, intensity);
+                }
+                
+                starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+                starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+                
+                const starMaterial = new THREE.PointsMaterial({ 
+                    size: size + Math.random() * 0.8,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const stars = new THREE.Points(starGeometry, starMaterial);
+                stars.userData.speedFactor = speedFactor;
+                scene.add(stars);
+                return stars;
+            };
+
+            // Enhanced starfield layers with more variety
+            starfieldLayers.push(createStars(30000, 1.2, 2500, 0xffffff, 0, 0.06));
+            starfieldLayers.push(createStars(20000, 0.9, 3500, 0xccccff, 1200, 0.03));
+            starfieldLayers.push(createStars(15000, 0.6, 4500, 0xffcccc, 2000, 0.02));
+            starfieldLayers.push(createStars(10000, 0.4, 5000, 0xffcccc, 2500, 0.015));
+            starfieldLayers.push(createStars(5000, 0.2, 7000, 0xccffcc, 4000, 0.005));
+            starfieldLayers.push(createStars(3000, 0.15, 9000, 0xffffcc, 5000, 0.002));
+
+            // Create nebulae
+            createNebulae();
+
+            // Enhanced planets
+            createPlanet(60, 0xAA66FF, -2200, -600, 400);
+            createPlanet(40, 0xFF9966, -1700, 800, -500);
+            createPlanet(80, 0x66CCFF, -2800, 0, 900);
+            createPlanet(25, 0xFFFF66, -1200, -400, 200);
+            createPlanet(35, 0xFF6666, -3500, 1200, -300);
+            createPlanet(50, 0x66FF99, -4000, -800, 600);
+
+            // Create distant asteroid fields
+            createDistantAsteroidField(-1200, 80, 600);
+            createDistantAsteroidField(-2000, 100, 800);
+            createDistantAsteroidField(-2800, 60, 500);
+            createDistantAsteroidField(-3600, 90, 700);
+        }
+
         function createNebulaTexture() {
             const canvas = document.createElement('canvas');
             const size = 512;
-            canvas.width = size; canvas.height = size;
+            canvas.width = size;
+            canvas.height = size;
             const context = canvas.getContext('2d');
+            
+            // Start with black background
             context.fillStyle = 'black';
             context.fillRect(0, 0, size, size);
             
-            for (let i = 0; i < 50; i++) { 
+            // Create multiple nebula clouds with different colors
+            const nebulaColors = [
+                { r: 150, g: 50, b: 200 }, // Purple
+                { r: 50, g: 150, b: 255 }, // Blue
+                { r: 255, g: 100, b: 150 }, // Pink
+                { r: 100, g: 255, b: 180 }, // Green
+                { r: 255, g: 200, b: 50 }  // Yellow
+            ];
+            
+            for (let i = 0; i < 60; i++) {
                 const x = Math.random() * size;
                 const y = Math.random() * size;
-                const radius = Math.random() * 250 + 100; 
+                const radius = Math.random() * 300 + 150;
+                const colorChoice = nebulaColors[Math.floor(Math.random() * nebulaColors.length)];
+                
                 const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
                 
-                const r1 = Math.floor(Math.random() * 150 + 50);
-                const g1 = Math.floor(Math.random() * 100);
-                const b1 = Math.floor(Math.random() * 150 + 100);
-                const alpha1 = Math.random() * 0.5 + 0.1; 
-
-                const r2 = Math.floor(Math.random() * 100);
-                const g2 = Math.floor(Math.random() * 100);
-                const b2 = Math.floor(Math.random() * 150 + 100);
-
-                const color1 = `rgba(${r1}, ${g1}, ${b1}, ${alpha1})`;
-                const color2 = `rgba(${r2}, ${g2}, ${b2}, 0)`;
+                const alpha1 = Math.random() * 0.6 + 0.1;
+                const alpha2 = Math.random() * 0.3;
+                
+                const color1 = `rgba(${colorChoice.r}, ${colorChoice.g}, ${colorChoice.b}, ${alpha1})`;
+                const color2 = `rgba(${colorChoice.r * 0.8}, ${colorChoice.g * 0.8}, ${colorChoice.b * 0.8}, ${alpha2})`;
+                const color3 = `rgba(${colorChoice.r * 0.5}, ${colorChoice.g * 0.5}, ${colorChoice.b * 0.5}, 0)`;
 
                 gradient.addColorStop(0, color1);
-                gradient.addColorStop(1, color2);
+                gradient.addColorStop(0.4, color2);
+                gradient.addColorStop(1, color3);
+                
                 context.fillStyle = gradient;
                 context.fillRect(0, 0, size, size);
             }
+            
             return new THREE.CanvasTexture(canvas);
+        }
+
+        function createNebulae() {
+            // Create multiple nebula planes with different textures and positions
+            for (let i = 0; i < 20; i++) {
+                const nebulaMaterial = new THREE.MeshBasicMaterial({
+                    map: createNebulaTexture(),
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    depthWrite: false,
+                    opacity: 0.7 + Math.random() * 0.3
+                });
+                
+                const nebulaSize = 1000 + Math.random() * 800;
+                const nebulaPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(nebulaSize, nebulaSize), 
+                    nebulaMaterial
+                );
+                
+                nebulaPlane.position.set(
+                    (Math.random() - 0.5) * 2000,
+                    (Math.random() - 0.5) * 1500,
+                    -1500 - Math.random() * 2000
+                );
+                
+                nebulaPlane.rotation.z = Math.random() * Math.PI * 2;
+                nebulaPlane.userData.initialZ = nebulaPlane.position.z;
+                nebulaPlane.userData.rotationSpeed = (Math.random() - 0.5) * 0.001;
+                
+                scene.add(nebulaPlane);
+                nebulaPlanes.push(nebulaPlane);
+            }
         }
 
         function createDistantAsteroidField(zPos, count, spread) {
             const field = new THREE.Group();
-            const rockMaterial = new THREE.MeshPhongMaterial({ color: 0x666666, flatShading: true });
+            const rockColors = [0x666666, 0x777777, 0x555555, 0x888888, 0x999999];
+            
             for (let i = 0; i < count; i++) {
-                const size = 1 + Math.random() * 5; 
-                const geometry = new THREE.DodecahedronGeometry(size, 0);
+                const size = 0.8 + Math.random() * 3;
+                const color = rockColors[Math.floor(Math.random() * rockColors.length)];
+                const rockMaterial = new THREE.MeshPhongMaterial({ 
+                    color: color, 
+                    emissive: color,
+                    emissiveIntensity: 0.05,
+                    flatShading: true 
+                });
+                
+                let geometry;
+                if (Math.random() < 0.5) {
+                    geometry = new THREE.DodecahedronGeometry(size, 0);
+                } else {
+                    geometry = new THREE.IcosahedronGeometry(size, 0);
+                }
+                
                 const asteroid = new THREE.Mesh(geometry, rockMaterial);
                 asteroid.position.set(
                     (Math.random() - 0.5) * spread,
@@ -823,736 +1192,586 @@
                 asteroid.rotation.x = Math.random() * Math.PI;
                 asteroid.rotation.y = Math.random() * Math.PI;
                 asteroid.rotation.z = Math.random() * Math.PI;
-                asteroid.userData.rotationSpeed = new THREE.Vector3(Math.random() * 0.005 - 0.0025, Math.random() * 0.005 - 0.0025, Math.random() * 0.005 - 0.0025);
+                asteroid.userData.rotationSpeed = new THREE.Vector3(
+                    Math.random() * 0.003 - 0.0015,
+                    Math.random() * 0.003 - 0.0015,
+                    Math.random() * 0.003 - 0.0015
+                );
                 field.add(asteroid);
             }
+            
             field.userData.initialZ = zPos;
             scene.add(field);
             distantAsteroidFields.push(field);
         }
 
-        function createBackground() {
-            const createStars = (count, size, range, color, depth, speedFactor) => {
-                const starGeometry = new THREE.BufferGeometry();
-                const starPositions = [];
-                for (let i = 0; i < count; i++) {
-                    starPositions.push(THREE.MathUtils.randFloatSpread(range), THREE.MathUtils.randFloatSpread(range), THREE.MathUtils.randFloatSpread(range) - depth);
-                }
-                starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-                const starMaterial = new THREE.PointsMaterial({ color: color, size: size + Math.random() * 0.5 }); 
-                const stars = new THREE.Points(starGeometry, starMaterial);
-                stars.userData.speedFactor = speedFactor;
-                scene.add(stars);
-                return stars;
-            };
-
-            starfieldLayers.push(createStars(25000, 0.7, 2000, 0xffffff, 0, 0.05)); 
-            starfieldLayers.push(createStars(15000, 0.5, 3000, 0xaaaaaa, 1000, 0.02)); 
-            starfieldLayers.push(createStars(8000, 0.3, 4000, 0x888888, 2000, 0.01)); 
-            starfieldLayers.push(createStars(4000, 0.2, 5000, 0x666666, 3000, 0.005)); 
-            // New: Very distant starfield layer
-            starfieldLayers.push(createStars(2000, 0.1, 8000, 0x555555, 4000, 0.001));
-
-            for (let i = 0; i < 15; i++) { 
-                const nebulaMaterial = new THREE.MeshBasicMaterial({
-                    map: createNebulaTexture(),
-                    blending: THREE.AdditiveBlending,
-                    transparent: true,
-                    depthWrite: false,
-                    opacity: 0.6 
-                });
-                const nebulaPlane = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), nebulaMaterial);
-                nebulaPlane.position.set((Math.random() - 0.5) * 1500, (Math.random() - 0.5) * 1200, -1000 - Math.random() * 1000);
-                nebulaPlane.rotation.z = Math.random() * Math.PI;
-                scene.add(nebulaPlane);
-                nebulaPlanes.push(nebulaPlane);
-            }
-
-            const createPlanet = (radius, color, zPos, xPos, yPos) => {
-                const planetGeometry = new THREE.SphereGeometry(radius, 32, 32); 
-                const planetMaterial = new THREE.MeshPhongMaterial({ color: color, emissive: color, emissiveIntensity: 0.2 });
-                const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-                planet.position.set(xPos, yPos, zPos);
-                scene.add(planet);
-                distantPlanets.push(planet);
-            };
-
-            createPlanet(50, 0xAA66FF, -2000, -500, 300);
-            createPlanet(30, 0xFF9966, -1500, 700, -400);
-            createPlanet(70, 0x66CCFF, -2500, 0, 800);
-
-            createDistantAsteroidField(-1000, 70, 500); 
-            createDistantAsteroidField(-1800, 90, 600); 
-            createDistantAsteroidField(-2500, 80, 400); 
+        function createPlanet(radius, color, zPos, xPos, yPos) {
+            const planetGeometry = new THREE.SphereGeometry(radius, 32, 32);
+            const planetMaterial = new THREE.MeshPhongMaterial({ 
+                color: color, 
+                emissive: color, 
+                emissiveIntensity: 0.3,
+                shininess: 30
+            });
+            const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+            planet.position.set(xPos, yPos, zPos);
+            planet.userData.rotationSpeed = 0.001 + Math.random() * 0.002;
+            scene.add(planet);
+            distantPlanets.push(planet);
         }
-        
+
         function createPlayer() {
-            const shipColors = { rocket: 0xff4444, ufo: 0x44ff44, satellite: 0xcccccc, alien: 0x9933ff };
+            const shipColors = { 
+                rocket: 0xff4444, 
+                ufo: 0x44ff44, 
+                satellite: 0xcccccc, 
+                alien: 0x9933ff 
+            };
             const mainColor = shipColors[playerType];
             
             player = new THREE.Group();
             
-            let body, leftWing, rightWing, leftEngine, rightEngine;
-            // Declare materials once at the top of the function
-            const material = new THREE.MeshPhongMaterial({ color: mainColor, emissive: mainColor, emissiveIntensity: 0.4, flatShading: true });
-            const darkMaterial = new THREE.MeshPhongMaterial({ color: mainColor * 0.8, emissive: mainColor * 0.2, flatShading: true });
-            const engineMaterial = new THREE.MeshPhongMaterial({ color: 0x555555, emissive: 0x333333, flatShading: true });
-            const lightMat = new THREE.MeshBasicMaterial({ color: 0xff00ff, emissive: 0xff00ff, emissiveIntensity: 1 }); // Declared here
+            const material = new THREE.MeshPhongMaterial({ 
+                color: mainColor, 
+                emissive: mainColor, 
+                emissiveIntensity: 0.5, 
+                flatShading: true,
+                shininess: 100
+            });
 
+            // Enhanced ship designs with more detail
             switch(playerType) {
                 case 'rocket':
-                    body = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.5, 8), material);
+                    const body = new THREE.Mesh(new THREE.ConeGeometry(0.7, 2.0, 8), material);
                     body.rotation.x = Math.PI / 2;
                     player.add(body);
 
-                    leftWing = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 0.5), darkMaterial);
+                    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, 0.6), material);
                     leftWing.rotation.z = Math.PI / 2;
-                    leftWing.position.set(-0.8, 0, 0.2);
+                    leftWing.position.set(-1.0, 0, 0.3);
                     player.add(leftWing);
 
-                    rightWing = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 0.5), darkMaterial);
+                    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, 0.6), material);
                     rightWing.rotation.z = Math.PI / 2;
-                    rightWing.position.set(0.8, 0, 0.2);
+                    rightWing.position.set(1.0, 0, 0.3);
                     player.add(rightWing);
-
-                    leftEngine = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.8, 8), engineMaterial);
-                    leftEngine.rotation.x = Math.PI / 2;
-                    leftEngine.position.set(-0.4, 0, 0.8);
-                    player.add(leftEngine);
-
-                    rightEngine = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.8, 8), engineMaterial);
-                    rightEngine.rotation.x = Math.PI / 2;
-                    rightEngine.position.set(0.4, 0, 0.8);
-                    player.add(rightEngine);
                     break;
 
                 case 'ufo':
-                    body = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.5, 32), material);
-                    body.position.y = 0.5;
-                    player.add(body);
+                    const ufoBody = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.6, 32), material);
+                    ufoBody.position.y = 0.6;
+                    player.add(ufoBody);
 
-                    const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMaterial);
-                    cockpit.position.y = 0.25;
+                    const cockpit = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), material);
+                    cockpit.position.y = 0.3;
                     player.add(cockpit);
-
-                    // lightMat is already declared, just use it
-                    const lightSize = 0.3;
-                    const ufoLight1 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMat);
-                    ufoLight1.position.set(1.0, 0.2, 0);
-                    player.add(ufoLight1);
-                    const ufoLight2 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMat);
-                    ufoLight2.position.set(-1.0, 0.2, 0);
-                    player.add(ufoLight2);
-                    const ufoLight3 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMat);
-                    ufoLight3.position.set(0, 0.2, 1.0);
-                    player.add(ufoLight3);
-                    const ufoLight4 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMat);
-                    ufoLight4.position.set(0, 0.2, -1.0);
-                    player.add(ufoLight4);
                     break;
 
                 case 'satellite':
-                    body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 1.5), material);
-                    player.add(body);
+                    const satBody = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 2.0), material);
+                    player.add(satBody);
 
-                    const panelMaterial = new THREE.MeshPhongMaterial({ color: 0x3366ff, emissive: 0x112255, flatShading: true });
-                    const leftPanel = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2, 1), panelMaterial);
-                    leftPanel.position.set(-0.8, 0, 0);
-                    player.add(leftPanel);
-                    const rightPanel = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2, 1), panelMaterial);
-                    rightPanel.position.set(0.8, 0, 0);
-                    player.add(rightPanel);
+                    const panel1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.5, 1.2), material);
+                    panel1.position.set(-1.0, 0, 0);
+                    player.add(panel1);
 
-                    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.0, 8), engineMaterial);
-                    antenna.position.set(0, 0.5, -1.0);
-                    player.add(antenna);
+                    const panel2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.5, 1.2), material);
+                    panel2.position.set(1.0, 0, 0);
+                    player.add(panel2);
                     break;
 
                 case 'alien':
-                    // New angular alien player ship design
-                    const mainBody = new THREE.Mesh(new THREE.ConeGeometry(1.2, 2.5, 4), material); // Pyramid-like body
-                    mainBody.rotation.x = Math.PI / 2;
-                    mainBody.position.z = 0.5;
-                    player.add(mainBody);
+                    const alienBody = new THREE.Mesh(new THREE.ConeGeometry(1.4, 3.0, 4), material);
+                    alienBody.rotation.x = Math.PI / 2;
+                    player.add(alienBody);
 
-                    const frontWing = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.5, 0.5), darkMaterial);
-                    frontWing.rotation.z = Math.PI / 2;
-                    frontWing.position.set(0, 0.5, -0.5);
-                    player.add(frontWing);
-
-                    const backWing = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.5, 0.5), darkMaterial);
-                    backWing.rotation.z = Math.PI / 2;
-                    backWing.position.set(0, -0.5, 1.5);
-                    player.add(backWing);
-
-                    const cockpitSphere = new THREE.Mesh(new THREE.SphereGeometry(0.6, 16, 16), darkMaterial);
-                    cockpitSphere.position.z = -0.8;
-                    cockpitSphere.position.y = 0.5;
-                    player.add(cockpitSphere);
-
-                    // lightMat is already declared, just use it
-                    const alienLight1 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lightMat);
-                    alienLight1.position.set(-0.7, 0.2, -1.5);
-                    player.add(alienLight1);
-                    const alienLight2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lightMat);
-                    alienLight2.position.set(0.7, 0.2, -1.5);
-                    player.add(alienLight2);
+                    const alienWing1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.0, 0.6), material);
+                    alienWing1.rotation.z = Math.PI / 2;
+                    alienWing1.position.set(0, 0.6, -0.6);
+                    player.add(alienWing1);
                     break;
             }
 
+            // Enhanced thruster particles
             player.thrusterParticles = new THREE.Group();
-            const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, blending: THREE.AdditiveBlending });
+            const particleMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffaa00, 
+                transparent: true, 
+                blending: THREE.AdditiveBlending 
+            });
             
-            for(let i = 0; i < 80; i++) { 
-                const particleGeometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.15, 8, 8); 
+            for(let i = 0; i < 100; i++) {
+                const particleGeometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.2, 6, 6);
                 const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-                particle.userData.life = Math.random() * 1.5 + 0.5;
+                particle.userData.life = Math.random() * 2 + 0.5;
                 particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.5,
-                    (Math.random() - 0.5) * 0.5,
-                    Math.random() * 2 + 1
+                    (Math.random() - 0.5) * 0.6,
+                    (Math.random() - 0.5) * 0.6,
+                    Math.random() * 3 + 2
                 );
                 player.thrusterParticles.add(particle);
             }
-            player.thrusterParticles.position.z = 1.0;
+            player.thrusterParticles.position.z = 1.2;
             player.add(player.thrusterParticles);
 
-
-            const shieldGeo = new THREE.SphereGeometry(1.2, 16, 16); 
-            const shieldMat = new THREE.MeshBasicMaterial({ color: 0x66ccff, transparent: true, opacity: 0.4, wireframe: true });
+            // Shield visual
+            const shieldGeo = new THREE.SphereGeometry(1.5, 16, 16);
+            const shieldMat = new THREE.MeshBasicMaterial({ 
+                color: 0x66ccff, 
+                transparent: true, 
+                opacity: 0.5, 
+                wireframe: true 
+            });
             player.shieldVisual = new THREE.Mesh(shieldGeo, shieldMat);
             player.shieldVisual.visible = false;
             player.add(player.shieldVisual);
 
             player.position.set(0, 0, 0);
             scene.add(player);
-            console.log("Player created and added to scene. Initial position:", player.position);
         }
 
-        function createAlienShip(zPos) {
-            const alien = new THREE.Group();
-            const alienColor = 0x00ff00; 
-
-            const material = new THREE.MeshPhongMaterial({ color: alienColor, emissive: alienColor, emissiveIntensity: 0.3, flatShading: true });
-            const darkMaterial = new THREE.MeshPhongMaterial({ color: alienColor * 0.8, emissive: alienColor * 0.2, flatShading: true });
-            const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xff00ff, emissive: 0xff00ff, emissiveIntensity: 1 });
-
-            // Main Body (more angular)
-            const body = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.8, 2.5), material);
-            body.position.z = -0.5;
-            alien.add(body);
-
-            // Left Arm/Wing
-            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 3, 8), darkMaterial);
-            leftArm.rotation.z = Math.PI / 2;
-            leftArm.rotation.y = Math.PI / 8; // Angle it slightly
-            leftArm.position.set(-1.5, 0, 0);
-            alien.add(leftArm);
-
-            // Right Arm/Wing
-            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 3, 8), darkMaterial);
-            rightArm.rotation.z = Math.PI / 2;
-            rightArm.rotation.y = -Math.PI / 8; // Angle it slightly
-            rightArm.position.set(1.5, 0, 0);
-            alien.add(rightArm);
-
-            // Front "Head" or Sensor
-            const head = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.0, 8), material);
-            head.rotation.x = -Math.PI / 2;
-            head.position.z = -1.5;
-            alien.add(head);
-
-            // Lights (adjusted positions for new design)
-            const lightSize = 0.2;
-            const alienLight1 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMaterial);
-            alienLight1.position.set(-1.0, 0.2, -1.0);
-            alien.add(alienLight1);
-            const alienLight2 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMaterial);
-            alienLight2.position.set(1.0, 0.2, -1.0);
-            alien.add(alienLight2);
-            
-            alien.thrusterParticles = new THREE.Group();
-            const alienParticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, blending: THREE.AdditiveBlending });
-            
-            for(let i = 0; i < 30; i++) { 
-                const alienParticleGeometry = new THREE.SphereGeometry(0.03 + Math.random() * 0.07, 6, 6); 
-                const particle = new THREE.Mesh(alienParticleGeometry, alienParticleMaterial);
-                particle.userData.life = Math.random() * 1 + 0.2;
-                particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.2,
-                    (Math.random() - 0.5) * 0.2,
-                    Math.random() * 1 + 0.5
-                );
-                alien.thrusterParticles.add(particle);
+        function populateInitialWorld() {
+            // Spawn initial obstacles and collectibles
+            for (let i = 0; i < 300; i++) {
+                createRandomAsteroid(player.position.z - (Math.random() * 600) - 50);
             }
-            alien.thrusterParticles.position.z = 1.5; // Position thrusters at the back of the new body
-            alien.add(alien.thrusterParticles);
-
-            alien.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80, zPos);
-            alien.userData.type = 'alien';
-            alien.userData.health = 1;
-            alien.userData.shootCooldown = ALIEN_SHOOT_COOLDOWN;
-            alien.userData.laserColor = 0x00ffff; // Default laser color
-            alien.userData.targetOffset = new THREE.Vector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, 0);
-            scene.add(alien);
-            alienShips.push(alien);
-        }
-
-        // New: Create a second type of alien ship
-        function createAlienShipType2(zPos) {
-            const alien = new THREE.Group();
-            const alienColor = ALIEN_TYPE2_COLOR; 
-
-            const material = new THREE.MeshPhongMaterial({ color: alienColor, emissive: alienColor, emissiveIntensity: 0.3, flatShading: true });
-            const darkMaterial = new THREE.MeshPhongMaterial({ color: alienColor * 0.8, emissive: alienColor * 0.2, flatShading: true });
-            const lightMaterial = new THREE.MeshBasicMaterial({ color: ALIEN_TYPE2_LASER_COLOR, emissive: ALIEN_TYPE2_LASER_COLOR, emissiveIntensity: 1 });
-
-            // Main Body (flatter, wider disc-like)
-            const body = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.0, 0.5, 32), material);
-            body.rotation.x = Math.PI / 2; // Flat
-            alien.add(body);
-
-            // Central dome/cockpit
-            const dome = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMaterial);
-            dome.position.z = 0.25;
-            alien.add(dome);
-
-            // Turrets/lights on the sides
-            const turretGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.5, 8);
-            const turret1 = new THREE.Mesh(turretGeo, engineMaterial);
-            turret1.position.set(1.5, 0, 0);
-            turret1.rotation.z = Math.PI / 2;
-            alien.add(turret1);
-
-            const turret2 = new THREE.Mesh(turretGeo, engineMaterial);
-            turret2.position.set(-1.5, 0, 0);
-            turret2.rotation.z = Math.PI / 2;
-            alien.add(turret2);
-
-            // Lights
-            const lightSize = 0.2;
-            const alienLight1 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMaterial);
-            alienLight1.position.set(1.0, 0, 0.5);
-            alien.add(alienLight1);
-            const alienLight2 = new THREE.Mesh(new THREE.SphereGeometry(lightSize, 8, 8), lightMaterial);
-            alienLight2.position.set(-1.0, 0, 0.5);
-            alien.add(alienLight2);
-            
-            alien.thrusterParticles = new THREE.Group();
-            const alienParticleMaterial = new THREE.MeshBasicMaterial({ color: 0xff00ff, transparent: true, blending: THREE.AdditiveBlending }); // Different color thrusters
-            
-            for(let i = 0; i < 40; i++) { // More particles
-                const alienParticleGeometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.1, 6, 6); 
-                const particle = new THREE.Mesh(alienParticleGeometry, alienParticleMaterial);
-                particle.userData.life = Math.random() * 1.5 + 0.5;
-                particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.3,
-                    (Math.random() - 0.5) * 0.3,
-                    Math.random() * 2 + 1
-                );
-                alien.thrusterParticles.add(particle);
+            for (let i = 0; i < 80; i++) {
+                spawnRandomCollectible(player.position.z - (Math.random() * 600) - 50);
             }
-            alien.thrusterParticles.position.z = -1.5; // Position thrusters at the back/bottom
-            alien.add(alien.thrusterParticles);
-
-            alien.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80, zPos);
-            alien.userData.type = 'alien'; // Still 'alien' for collision purposes
-            alien.userData.health = ALIEN_TYPE2_HEALTH;
-            alien.userData.shootCooldown = ALIEN_TYPE2_SHOOT_COOLDOWN;
-            alien.userData.laserColor = ALIEN_TYPE2_LASER_COLOR; // Store laser color
-            alien.userData.targetOffset = new THREE.Vector3((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, 0); // Wider target range
-            scene.add(alien);
-            alienShips.push(alien);
         }
 
-        // New: Create a third type of alien ship (fast and erratic)
-        function createAlienShipType3(zPos) {
-            const alien = new THREE.Group();
-            const alienColor = ALIEN_TYPE3_COLOR; 
-
-            const material = new THREE.MeshPhongMaterial({ color: alienColor, emissive: alienColor, emissiveIntensity: 0.5, flatShading: true });
-            const darkMaterial = new THREE.MeshPhongMaterial({ color: alienColor * 0.8, emissive: alienColor * 0.2, flatShading: true });
-            const lightMaterial = new THREE.MeshBasicMaterial({ color: ALIEN_TYPE3_LASER_COLOR, emissive: ALIEN_TYPE3_LASER_COLOR, emissiveIntensity: 1 });
-
-            // Main Body (sleek, pointed)
-            const body = new THREE.Mesh(new THREE.ConeGeometry(0.8, 3.0, 8), material);
-            body.rotation.x = Math.PI / 2;
-            alien.add(body);
-
-            // Small wings/stabilizers
-            const wingGeo = new THREE.BoxGeometry(0.1, 1.5, 0.3);
-            const wing1 = new THREE.Mesh(wingGeo, darkMaterial);
-            wing1.rotation.z = Math.PI / 2;
-            wing1.position.set(-0.6, 0, 0.5);
-            alien.add(wing1);
-            const wing2 = new THREE.Mesh(wingGeo, darkMaterial);
-            wing2.rotation.z = Math.PI / 2;
-            wing2.position.set(0.6, 0, 0.5);
-            alien.add(wing2);
-
-            // Front light/sensor
-            const frontLight = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lightMaterial);
-            frontLight.position.z = -1.5;
-            alien.add(frontLight);
-            
-            alien.thrusterParticles = new THREE.Group();
-            const alienParticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, blending: THREE.AdditiveBlending }); // Green thrusters
-            
-            for(let i = 0; i < 50; i++) { // More particles for high speed
-                const alienParticleGeometry = new THREE.SphereGeometry(0.04 + Math.random() * 0.08, 6, 6); 
-                const particle = new THREE.Mesh(alienParticleGeometry, alienParticleMaterial);
-                particle.userData.life = Math.random() * 1 + 0.3;
-                particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.4,
-                    (Math.random() - 0.5) * 0.4,
-                    Math.random() * 3 + 2
-                );
-                alien.thrusterParticles.add(particle);
-            }
-            alien.thrusterParticles.position.z = 1.5; // Position behind the rocket body
-            alien.add(alien.thrusterParticles);
-
-            alien.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80, zPos);
-            alien.userData.type = 'alien'; // Still 'alien' for collision purposes
-            alien.userData.health = ALIEN_TYPE3_HEALTH;
-            alien.userData.shootCooldown = ALIEN_TYPE3_SHOOT_COOLDOWN;
-            alien.userData.laserColor = ALIEN_TYPE3_LASER_COLOR; // Store laser color
-            alien.userData.targetOffset = new THREE.Vector3(
-                (Math.random() - 0.5) * ALIEN_TYPE3_TARGET_OFFSET_RANGE, 
-                (Math.random() - 0.5) * ALIEN_TYPE3_TARGET_OFFSET_RANGE, 
-                0
-            ); // Wider target range for erratic movement
-            alien.userData.speedFactor = ALIEN_TYPE3_SPEED_FACTOR; // Store speed factor
-            alien.userData.approachSpeedFactor = ALIEN_TYPE3_APPROACH_SPEED_FACTOR; // Store approach speed factor
-            scene.add(alien);
-            alienShips.push(alien);
-        }
-
-        // New: Create a fourth type of alien ship (Tanky and Slow)
-        function createAlienShipType4(zPos) {
-            const alien = new THREE.Group();
-            const alienColor = ALIEN_TYPE4_COLOR; 
-
-            const material = new THREE.MeshPhongMaterial({ color: alienColor, emissive: alienColor, emissiveIntensity: 0.3, flatShading: true });
-            const darkMaterial = new THREE.MeshPhongMaterial({ color: alienColor * 0.8, emissive: alienColor * 0.2, flatShading: true });
-            const lightMaterial = new THREE.MeshBasicMaterial({ color: ALIEN_TYPE4_LASER_COLOR, emissive: ALIEN_TYPE4_LASER_COLOR, emissiveIntensity: 1 });
-
-            // Main Body (Cube-like, bulky)
-            const body = new THREE.Mesh(new THREE.BoxGeometry(3.0, 2.0, 2.0), material);
-            alien.add(body);
-
-            // Large, central eye/sensor
-            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), lightMaterial);
-            eye.position.z = -1.0;
-            alien.add(eye);
-
-            // Side cannons
-            const cannonGeo = new THREE.CylinderGeometry(0.3, 0.3, 1.5, 8);
-            const cannon1 = new THREE.Mesh(cannonGeo, darkMaterial);
-            cannon1.rotation.x = Math.PI / 2;
-            cannon1.position.set(1.5, 0, 0);
-            alien.add(cannon1);
-            const cannon2 = new THREE.Mesh(cannonGeo, darkMaterial);
-            cannon2.rotation.x = Math.PI / 2;
-            cannon2.position.set(-1.5, 0, 0);
-            alien.add(cannon2);
-            
-            alien.thrusterParticles = new THREE.Group();
-            const alienParticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, blending: THREE.AdditiveBlending }); // Green thrusters
-            
-            for(let i = 0; i < 20; i++) { // Fewer particles as it's slow
-                const alienParticleGeometry = new THREE.SphereGeometry(0.06 + Math.random() * 0.12, 6, 6); 
-                const particle = new THREE.Mesh(alienParticleGeometry, alienParticleMaterial);
-                particle.userData.life = Math.random() * 2 + 1;
-                particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.1,
-                    (Math.random() - 0.5) * 0.1,
-                    Math.random() * 0.5 + 0.2
-                );
-                alien.thrusterParticles.add(particle);
-            }
-            alien.thrusterParticles.position.z = 1.5; // Position behind the body
-            alien.add(alien.thrusterParticles);
-
-            alien.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80, zPos);
-            alien.userData.type = 'alien'; // Still 'alien' for collision purposes
-            alien.userData.health = ALIEN_TYPE4_HEALTH;
-            alien.userData.shootCooldown = ALIEN_TYPE4_SHOOT_COOLDOWN;
-            alien.userData.laserColor = ALIEN_TYPE4_LASER_COLOR; // Store laser color
-            alien.userData.targetOffset = new THREE.Vector3(
-                (Math.random() - 0.5) * ALIEN_TYPE4_TARGET_OFFSET_RANGE, 
-                (Math.random() - 0.5) * ALIEN_TYPE4_TARGET_OFFSET_RANGE, 
-                0
-            ); // More precise targeting
-            alien.userData.speedFactor = ALIEN_TYPE4_SPEED_FACTOR; // Store speed factor
-            alien.userData.approachSpeedFactor = ALIEN_TYPE4_APPROACH_SPEED_FACTOR; // Store approach speed factor
-            scene.add(alien);
-            alienShips.push(alien);
-        }
-
-        // Function to create a single random asteroid, now using RANDOM_SPAWN_AREA_RADIUS
         function createRandomAsteroid(zPos) {
-            const obstacle = createAsteroid();
+            const asteroid = createAsteroid();
             const angle = Math.random() * Math.PI * 2;
-            const r = Math.random() * RANDOM_SPAWN_AREA_RADIUS; // Use the general spawn radius
-            obstacle.position.set(
-                Math.cos(angle) * r,
-                Math.sin(angle) * r,
-                zPos + (Math.random() - 0.5) * 100 // Spread along Z
+            const radius = Math.random() * 100;
+            asteroid.position.set(
+                Math.cos(angle) * radius,
+                Math.sin(angle) * radius,
+                zPos + (Math.random() - 0.5) * 120
             );
-            scene.add(obstacle);
-            obstacles.push(obstacle);
+            scene.add(asteroid);
+            obstacles.push(asteroid);
         }
 
-        // Modified to spawn any collectible type, including crystals, randomly
-        function spawnRandomPowerup(zPos) {
+        function createAsteroid() {
+            const colors = [0x888888, 0x777777, 0x666666, 0x998877, 0x776655, 0xAA7766];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            const material = new THREE.MeshPhongMaterial({ 
+                color: randomColor, 
+                emissive: randomColor, 
+                emissiveIntensity: 0.15, 
+                flatShading: true,
+                shininess: 10
+            });
+
+            const size = 1.8 + Math.random() * 5;
+            let geometry;
+            const type = Math.random();
+            
+            if (type < 0.4) {
+                geometry = new THREE.DodecahedronGeometry(size, 1);
+            } else if (type < 0.7) {
+                geometry = new THREE.IcosahedronGeometry(size, 1);
+            } else {
+                geometry = new THREE.OctahedronGeometry(size, 1);
+            }
+            
+            const asteroid = new THREE.Mesh(geometry, material);
+            asteroid.userData.type = 'obstacle';
+            asteroid.userData.rotationSpeed = new THREE.Vector3(
+                Math.random() * 0.03 - 0.015,
+                Math.random() * 0.03 - 0.015,
+                Math.random() * 0.03 - 0.015
+            );
+            asteroid.castShadow = true;
+            return asteroid;
+        }
+
+        function spawnRandomCollectible(zPos) {
             const randomType = COLLECTIBLE_TYPES[Math.floor(Math.random() * COLLECTIBLE_TYPES.length)];
             const collectible = createCollectible(randomType);
-
+            
             const angle = Math.random() * Math.PI * 2;
-            const r = Math.random() * RANDOM_SPAWN_AREA_RADIUS; // Use the general spawn radius
-
+            const radius = Math.random() * 100;
             collectible.position.set(
-                Math.cos(angle) * r,
-                Math.sin(angle) * r,
-                zPos + (Math.random() - 0.5) * 50 // Spread along Z
+                Math.cos(angle) * radius,
+                Math.sin(angle) * radius,
+                zPos + (Math.random() - 0.5) * 60
             );
             scene.add(collectible);
             collectibles.push(collectible);
         }
 
-
-        function createAsteroid() {
-            // Randomize color for more interesting asteroids
-            const colors = [
-                0x888888, // Grey
-                0x777777,
-                0x666666,
-                0x555555,
-                0x998877, // Brownish
-                0x776655,
-                0xAA7766, // Reddish
-                0x775555
-            ];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Create a slightly emissive material
-            const rockMaterial = new THREE.MeshPhongMaterial({ 
-                color: randomColor, 
-                emissive: randomColor, 
-                emissiveIntensity: 0.1, // Subtle glow
-                flatShading: true 
-            });
-
-            // Increase size variation
-            const size = 1.5 + Math.random() * 4; // Wider range for size
-            let geometry;
-            const type = Math.random();
-            // Randomize segments for more varied asteroid shapes
-            const segments = 1 + Math.floor(Math.random() * 2); // 1 or 2 segments for low poly look
-
-            if (type < 0.33) {
-                geometry = new THREE.DodecahedronGeometry(size, segments);
-            } else if (type < 0.66) {
-                geometry = new THREE.IcosahedronGeometry(size, segments);
-            } else {
-                geometry = new THREE.OctahedronGeometry(size, segments);
-            }
-            
-            const obstacle = new THREE.Mesh(geometry, rockMaterial);
-            obstacle.userData.type = 'obstacle';
-            obstacle.userData.rotationSpeed = new THREE.Vector3(Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01);
-            return obstacle;
-        }
-        
-        function createCollectible(type = null) { // Added type parameter
-            const randomType = type || COLLECTIBLE_TYPES[Math.floor(Math.random() * COLLECTIBLE_TYPES.length)];
-            let collectibleGroup = new THREE.Group(); // Use a group for complex collectibles
+        function createCollectible(type) {
+            const collectibleGroup = new THREE.Group();
             let material;
 
-            switch (randomType) {
+            switch (type) {
                 case 'shield':
-                    material = new THREE.MeshPhongMaterial({ color: 0x66ccff, emissive: 0x66ccff, emissiveIntensity: 1.5, transparent: true, opacity: 0.5 }); 
-                    let shieldSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), material); 
-                    collectibleGroup.add(shieldSphere);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0x66ccff, 
+                        emissive: 0x66ccff, 
+                        emissiveIntensity: 2.0, 
+                        transparent: true, 
+                        opacity: 0.6 
+                    });
+                    const shield = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 16), material);
+                    collectibleGroup.add(shield);
                     break;
+
                 case 'health':
-                    material = new THREE.MeshPhongMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 1.5, flatShading: true }); 
-                    let horizontalBar = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 0.5), material);
-                    let verticalBar = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.5, 0.5), material);
-                    collectibleGroup.add(horizontalBar);
-                    collectibleGroup.add(verticalBar);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0xff0000, 
+                        emissive: 0xff0000, 
+                        emissiveIntensity: 2.0 
+                    });
+                    const h1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.6, 0.6), material);
+                    const h2 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.6), material);
+                    collectibleGroup.add(h1, h2);
                     break;
+
                 case 'boost':
-                    material = new THREE.MeshPhongMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 1.8, flatShading: true }); 
-                    let boostCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 1.2, 8), material); 
-                    collectibleGroup.add(boostCylinder);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0xffff00, 
+                        emissive: 0xffff00, 
+                        emissiveIntensity: 2.2 
+                    });
+                    const boostCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.5, 8), material);
+                    collectibleGroup.add(boostCyl);
                     break;
+
                 case 'tripleShot':
-                    material = new THREE.MeshPhongMaterial({ color: 0xaa00ff, emissive: 0xaa00ff, emissiveIntensity: 1.5, flatShading: true }); 
-                    let sphere1 = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), material);
-                    sphere1.position.set(-0.5, 0, 0);
-                    let sphere2 = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), material);
-                    sphere2.position.set(0.5, 0, 0);
-                    let sphere3 = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), material);
-                    sphere3.position.set(0, 0.8, 0); // Arranged in a triangle
-                    collectibleGroup.add(sphere1, sphere2, sphere3);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0xaa00ff, 
+                        emissive: 0xaa00ff, 
+                        emissiveIntensity: 2.0 
+                    });
+                    for (let i = 0; i < 3; i++) {
+                        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), material);
+                        sphere.position.set((i - 1) * 0.8, 0, 0);
+                        collectibleGroup.add(sphere);
+                    }
                     break;
+
                 case 'speedBoost':
-                    material = new THREE.MeshPhongMaterial({ color: 0x00ffaa, emissive: 0x00ffaa, emissiveIntensity: 1.5, flatShading: true }); 
-                    let cone = new THREE.Mesh(new THREE.ConeGeometry(0.7, 1.5, 8), material);
-                    cone.rotation.x = Math.PI / 2; // Pointing forward
-                    let cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1, 8), material);
-                    cylinder.rotation.x = Math.PI / 2;
-                    cylinder.position.z = 0.75; // Connect to the cone
-                    collectibleGroup.add(cone, cylinder);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0x00ffaa, 
+                        emissive: 0x00ffaa, 
+                        emissiveIntensity: 2.0 
+                    });
+                    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.8, 2.0, 8), material);
+                    cone.rotation.x = Math.PI / 2;
+                    collectibleGroup.add(cone);
                     break;
+
+                case 'rapidFire':
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0xff6600, 
+                        emissive: 0xff6600, 
+                        emissiveIntensity: 2.0 
+                    });
+                    const rapidGeo = new THREE.TorusGeometry(0.8, 0.3, 8, 16);
+                    const rapid = new THREE.Mesh(rapidGeo, material);
+                    collectibleGroup.add(rapid);
+                    break;
+
+                case 'magneticField':
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0x8800ff, 
+                        emissive: 0x8800ff, 
+                        emissiveIntensity: 2.0 
+                    });
+                    const magnetRing1 = new THREE.Mesh(new THREE.TorusGeometry(1.0, 0.2, 8, 16), material);
+                    const magnetRing2 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.15, 8, 16), material);
+                    magnetRing2.rotation.x = Math.PI / 2;
+                    collectibleGroup.add(magnetRing1, magnetRing2);
+                    break;
+
+                case 'timeWarp':
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0x00ffff, 
+                        emissive: 0x00ffff, 
+                        emissiveIntensity: 2.2 
+                    });
+                    const timeCore = new THREE.Mesh(new THREE.SphereGeometry(0.6, 16, 16), material);
+                    const timeRing = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.1, 8, 32), material);
+                    timeRing.rotation.x = Math.PI / 4;
+                    collectibleGroup.add(timeCore, timeRing);
+                    break;
+
                 case 'crystal':
                 default:
-                    material = new THREE.MeshPhongMaterial({ color: 0x44ffaa, emissive: 0x44ffaa, emissiveIntensity: 1.5, flatShading: true }); 
-                    let crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.7, 0), material);
+                    material = new THREE.MeshPhongMaterial({ 
+                        color: 0x44ffaa, 
+                        emissive: 0x44ffaa, 
+                        emissiveIntensity: 2.0 
+                    });
+                    const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.9, 0), material);
                     collectibleGroup.add(crystal);
                     break;
             }
             
             collectibleGroup.userData.type = 'collectible';
-            collectibleGroup.userData.collectibleType = randomType;
-            // Add a rotation speed for the group
-            collectibleGroup.userData.rotationSpeed = new THREE.Vector3(Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01);
+            collectibleGroup.userData.collectibleType = type;
+            collectibleGroup.userData.rotationSpeed = new THREE.Vector3(
+                Math.random() * 0.03 - 0.015,
+                Math.random() * 0.03 - 0.015,
+                Math.random() * 0.03 - 0.015
+            );
             return collectibleGroup;
         }
-        
-        // Modified fireLaser to accept a laserColor parameter
-        function fireLaser(position, isPlayerLaser = true, laserColor = 0x00ffff) {
+
+        function createAlienShip(zPos) {
+            const alien = new THREE.Group();
+            const alienColor = 0x00ff00;
+            
+            const material = new THREE.MeshPhongMaterial({ 
+                color: alienColor, 
+                emissive: alienColor, 
+                emissiveIntensity: 0.4, 
+                flatShading: true 
+            });
+
+            const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.0, 3.0), material);
+            alien.add(body);
+
+            const wing1 = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 3.5, 8), material);
+            wing1.rotation.z = Math.PI / 2;
+            wing1.position.set(-2.0, 0, 0);
+            alien.add(wing1);
+
+            const wing2 = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 3.5, 8), material);
+            wing2.rotation.z = Math.PI / 2;
+            wing2.position.set(2.0, 0, 0);
+            alien.add(wing2);
+
+            alien.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, zPos);
+            alien.userData.type = 'alien';
+            alien.userData.health = 1 + Math.floor(waveNumber / 3);
+            alien.userData.shootCooldown = 2.5;
+            alien.userData.targetOffset = new THREE.Vector3(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                0
+            );
+            alien.userData.scoreValue = 300 + (waveNumber * 50);
+            
+            scene.add(alien);
+            alienShips.push(alien);
+            enemiesInWave++;
+        }
+
+        function showAchievement(achievementKey) {
+            if (ACHIEVEMENTS[achievementKey].unlocked) return;
+            
+            ACHIEVEMENTS[achievementKey].unlocked = true;
+            achievementUnlocked.push(achievementKey);
+            
+            const achievement = ACHIEVEMENTS[achievementKey];
+            const popup = document.createElement('div');
+            popup.className = 'achievement-popup';
+            popup.innerHTML = `
+                <div style="font-size: 16px; margin-bottom: 5px;">🏆 ACHIEVEMENT UNLOCKED!</div>
+                <div style="font-size: 20px; margin-bottom: 5px;">${achievement.name}</div>
+                <div style="font-size: 14px; opacity: 0.9;">${achievement.desc}</div>
+            `;
+            document.body.appendChild(popup);
+            
+            sounds.powerup.triggerAttackRelease('C7', '8n');
+            score += 500;
+            
+            setTimeout(() => {
+                if (popup.parentNode) {
+                    popup.parentNode.removeChild(popup);
+                }
+            }, 4000);
+        }
+
+        function showWaveComplete() {
+            const waveDiv = document.createElement('div');
+            waveDiv.className = 'wave-complete';
+            waveDiv.innerHTML = `
+                <div>🌟 WAVE ${waveNumber} COMPLETE! 🌟</div>
+                <div style="font-size: 24px; margin-top: 10px;">Bonus: +${waveBonus}</div>
+                ${perfectWave ? '<div style="font-size: 20px; color: #ffaa00;">Perfect Wave! +1000</div>' : ''}
+            `;
+            document.body.appendChild(waveDiv);
+            
+            sounds.collect.triggerAttackRelease('C6', '4n');
+            
+            setTimeout(() => {
+                if (waveDiv.parentNode) {
+                    waveDiv.parentNode.removeChild(waveDiv);
+                }
+            }, 2000);
+        }
+
+        function checkAchievements() {
+            if (streakCounter >= 1 && !ACHIEVEMENTS.firstKill.unlocked) {
+                showAchievement('firstKill');
+            }
+            if (waveNumber >= 5 && !ACHIEVEMENTS.wave5.unlocked) {
+                showAchievement('wave5');
+            }
+            if (distance >= 100 && !ACHIEVEMENTS.distance100.unlocked) {
+                showAchievement('distance100');
+            }
+            if (score >= 10000 && !ACHIEVEMENTS.score10k.unlocked) {
+                showAchievement('score10k');
+            }
+            if (streakCounter >= 25 && !ACHIEVEMENTS.streak25.unlocked) {
+                showAchievement('streak25');
+            }
+        }
+
+        function updateWaveSystem() {
+            if (enemiesInWave > 0 && alienShips.length === 0 && currentAlienSpawnTimer > 2) {
+                waveBonus = waveNumber * 200;
+                score += waveBonus;
+                
+                if (perfectWave) {
+                    score += 1000;
+                    showAchievement('perfectWave');
+                }
+                
+                showWaveComplete();
+                
+                waveNumber++;
+                enemiesInWave = 0;
+                perfectWave = true;
+                
+                alienSpawnCooldown = Math.max(2, alienSpawnCooldown - 0.2);
+                currentAlienSpawnTimer = alienSpawnCooldown;
+                
+                checkAchievements();
+            }
+        }
+
+        function showComboDisplay(comboValue) {
+            // Combo system removed
+        }
+
+        function addKill() {
+            streakCounter++;
+            checkAchievements();
+        }
+
+        function resetStreak() {
+            streakCounter = 0;
+        }
+
+        function fireLaser(position, isPlayerLaser = true) {
             if (isPlayerLaser) {
                 sounds.laser.triggerAttackRelease('C7', '32n');
-                if (isTripleShotActive) {
-                    const laser1 = createSingleLaser(position, true, laserColor);
-                    laser1.position.x -= 0.5;
-                    const laser2 = createSingleLaser(position, true, laserColor);
-                    const laser3 = createSingleLaser(position, true, laserColor);
-                    laser3.position.x += 0.5;
-                    lasers.push(laser1, laser2, laser3);
-                    scene.add(laser1, laser2, laser3);
+                
+                if (powerUps.tripleShot) {
+                    for (let i = -1; i <= 1; i++) {
+                        const laser = createSingleLaser(position, true);
+                        laser.position.x += i * 0.8;
+                        lasers.push(laser);
+                        scene.add(laser);
+                    }
                 } else {
-                    const laser = createSingleLaser(position, true, laserColor);
+                    const laser = createSingleLaser(position, true);
                     lasers.push(laser);
                     scene.add(laser);
                 }
             } else {
-                sounds.alienLaser.triggerAttackRelease('F4', '32n');
-                const laser = createSingleLaser(position, false, laserColor); // Pass laserColor
+                const laser = createSingleLaser(position, false);
                 lasers.push(laser);
                 scene.add(laser);
             }
         }
 
-        // Modified createSingleLaser to use the passed laserColor
-        function createSingleLaser(position, isPlayerLaser, laserColor) {
-            const laserMaterial = new THREE.MeshBasicMaterial({ color: isPlayerLaser ? 0xff3333 : laserColor, emissive: isPlayerLaser ? 0xff3333 : laserColor, emissiveIntensity: 1.5 });
-            const laserGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 8); 
-            const laser = new THREE.Mesh(laserGeometry, laserMaterial);
+        function createSingleLaser(position, isPlayerLaser) {
+            const color = isPlayerLaser ? 0xff3333 : 0x00ffff;
+            const material = new THREE.MeshBasicMaterial({ 
+                color: color, 
+                emissive: color, 
+                emissiveIntensity: 1.8 
+            });
+            const geometry = new THREE.CylinderGeometry(0.15, 0.15, 2.5, 8);
+            const laser = new THREE.Mesh(geometry, material);
             laser.rotation.x = Math.PI / 2;
             laser.position.copy(position);
-            laser.position.z -= 1;
+            laser.position.z -= 1.5;
             laser.userData.isPlayerLaser = isPlayerLaser;
             return laser;
         }
 
-        // New: Create a rocket object
         function createRocket(position) {
             const rocketGroup = new THREE.Group();
-            const rocketMaterial = new THREE.MeshPhongMaterial({ color: 0xdddddd, emissive: 0x888888, flatShading: true });
-            const tipMaterial = new THREE.MeshPhongMaterial({ color: 0xff4444, emissive: 0xcc0000, flatShading: true });
-            const engineMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, emissive: 0x111111, flatShading: true });
+            const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xdddddd, 
+                emissive: 0x888888, 
+                shininess: 100 
+            });
+            const tipMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xff4444, 
+                emissive: 0xcc0000 
+            });
 
-            // Body
-            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.6, 2.5, 8), rocketMaterial);
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 3.0, 8), bodyMaterial);
             rocketGroup.add(body);
 
-            // Tip
-            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.0, 8), tipMaterial);
-            tip.position.y = 1.75; // Position above body
+            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.7, 1.2, 8), tipMaterial);
+            tip.position.y = 2.1;
             rocketGroup.add(tip);
 
-            // Fins
-            const finGeometry = new THREE.BoxGeometry(0.1, 1.0, 0.8);
-            const fin1 = new THREE.Mesh(finGeometry, engineMaterial);
-            fin1.position.set(0, -1.0, 0.6);
-            rocketGroup.add(fin1);
-            const fin2 = new THREE.Mesh(finGeometry, engineMaterial);
-            fin2.position.set(0, -1.0, -0.6);
-            rocketGroup.add(fin2);
-            const fin3 = new THREE.Mesh(finGeometry, engineMaterial);
-            fin3.rotation.y = Math.PI / 2;
-            fin3.position.set(0.6, -1.0, 0);
-            rocketGroup.add(fin3);
-            const fin4 = new THREE.Mesh(finGeometry, engineMaterial);
-            fin4.rotation.y = Math.PI / 2;
-            fin4.position.set(-0.6, -1.0, 0);
-            rocketGroup.add(fin4);
+            const finGeo = new THREE.BoxGeometry(0.15, 1.2, 1.0);
+            for (let i = 0; i < 4; i++) {
+                const fin = new THREE.Mesh(finGeo, bodyMaterial);
+                const angle = (i / 4) * Math.PI * 2;
+                fin.position.set(Math.cos(angle) * 0.8, -1.2, Math.sin(angle) * 0.8);
+                rocketGroup.add(fin);
+            }
 
-
-            rocketGroup.rotation.x = Math.PI / 2; // Point rocket forward
+            rocketGroup.rotation.x = Math.PI / 2;
             rocketGroup.position.copy(position);
-            rocketGroup.position.z -= 5; // Launch slightly ahead of player
+            rocketGroup.position.z -= 8;
             rocketGroup.userData.type = 'rocket';
             rocketGroup.userData.distanceTraveled = 0;
-            rocketGroup.userData.initialZ = position.z; // Store initial Z for distance calculation
+            rocketGroup.userData.initialZ = position.z;
             
-            // Add a small thruster particle effect for the rocket
-            rocketGroup.thrusterParticles = new THREE.Group();
-            const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xff8800, transparent: true, blending: THREE.AdditiveBlending });
-            for(let i = 0; i < 20; i++) {
-                const particleGeometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.1, 6, 6);
-                const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-                particle.userData.life = Math.random() * 0.5 + 0.2;
-                particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.2,
-                    (Math.random() - 0.5) * 0.2,
-                    Math.random() * 5 + 3
-                );
-                rocketGroup.thrusterParticles.add(particle);
-            }
-            rocketGroup.thrusterParticles.position.z = 1.5; // Position behind the rocket body
-            rocketGroup.add(rocketGroup.thrusterParticles);
-
             scene.add(rocketGroup);
             rockets.push(rocketGroup);
         }
 
-
         function createExplosion(position) {
             if (explosionSoundCooldown <= 0) {
                 sounds.explosion.triggerAttackRelease("8n");
-                explosionSoundCooldown = 0.1;
+                explosionSoundCooldown = 0.15;
             }
             
-            const particleCount = 50; 
-            const particleGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-            const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, blending: THREE.AdditiveBlending });
-            
+            const particleCount = 60;
+            const particleGeometry = new THREE.SphereGeometry(0.15, 6, 6);
             const explosionGroup = new THREE.Group();
             explosionGroup.position.copy(position);
             scene.add(explosionGroup);
 
             for(let i = 0; i < particleCount; i++) {
-                const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: new THREE.Color().setHSL(Math.random() * 0.1 + 0.1, 1, 0.5),
+                    transparent: true, 
+                    blending: THREE.AdditiveBlending 
+                });
+                const particle = new THREE.Mesh(particleGeometry, material);
                 particle.position.set(
-                    (Math.random() - 0.5) * 2,
-                    (Math.random() - 0.5) * 2,
-                    (Math.random() - 0.5) * 2
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3
                 );
                 particle.userData.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 15
                 );
-                particle.userData.life = Math.random() * 0.8 + 0.4; 
+                particle.userData.life = Math.random() * 1.0 + 0.5;
                 explosionGroup.add(particle);
             }
 
-            let explosionLife = 1;
+            let explosionLife = 1.2;
             const explosionInterval = setInterval(() => {
                 explosionLife -= 0.05;
                 if (explosionLife <= 0) {
@@ -1560,12 +1779,46 @@
                     scene.remove(explosionGroup);
                 } else {
                     explosionGroup.children.forEach(particle => {
-                        particle.position.addScaledVector(particle.userData.velocity, clock.getDelta());
+                        particle.position.addScaledVector(particle.userData.velocity, 0.016);
                         particle.material.opacity = explosionLife;
-                        particle.scale.multiplyScalar(1.05); 
+                        particle.scale.multiplyScalar(1.06);
                     });
                 }
             }, 16);
+        }
+
+        function rocketExplode(rocketPosition) {
+            sounds.explosion.triggerAttackRelease("4n");
+            createExplosion(rocketPosition.clone());
+            applyCameraShake(1.0, 300);
+
+            let hitCount = 0;
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obstacle = obstacles[i];
+                if (rocketPosition.distanceTo(obstacle.position) < ROCKET_EXPLOSION_RADIUS) {
+                    createExplosion(obstacle.position.clone());
+                    scene.remove(obstacle);
+                    obstacles.splice(i, 1);
+                    score += 75;
+                    hitCount++;
+                }
+            }
+
+            for (let i = alienShips.length - 1; i >= 0; i--) {
+                const alien = alienShips[i];
+                if (rocketPosition.distanceTo(alien.position) < ROCKET_EXPLOSION_RADIUS) {
+                    createExplosion(alien.position.clone());
+                    scene.remove(alien);
+                    alienShips.splice(i, 1);
+                    score += 300;
+                    hitCount++;
+                }
+            }
+
+            if (hitCount > 0) {
+                addKill();
+            }
         }
 
         let cameraShakeIntensity = 0;
@@ -1576,88 +1829,128 @@
             }, duration);
         }
 
-        function updatePlayer(delta) {
-            const acceleration = 50 * delta, maxSpeed = 15;
-            if (keys['arrowleft'] || keys['a']) playerVelocity.x = Math.max(playerVelocity.x - acceleration, -maxSpeed);
-            else if (keys['arrowright'] || keys['d']) playerVelocity.x = Math.min(playerVelocity.x + acceleration, maxSpeed);
-            else playerVelocity.x *= 0.92;
-            if (keys['arrowup'] || keys['w']) playerVelocity.y = Math.min(playerVelocity.y + acceleration, maxSpeed);
-            else if (keys['arrowdown'] || keys['s']) playerVelocity.y = Math.max(playerVelocity.y - acceleration, -maxSpeed);
-            else playerVelocity.y *= 0.92;
+        function showPowerUpIndicator(text) {
+            const existing = document.querySelector('.power-indicator');
+            if (existing) existing.remove();
             
-            const isBoosting = keys[' '] && boost > 0;
+            const indicator = document.createElement('div');
+            indicator.className = 'power-indicator';
+            indicator.textContent = text;
+            document.body.appendChild(indicator);
+            
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.parentNode.removeChild(indicator);
+                }
+            }, 3000);
+        }
+
+        function updatePlayer(delta) {
+            const acceleration = 60 * delta;
+            const maxSpeed = 18;
+            
+            // Movement - handle both keyboard and touch input
+            let inputX = 0;
+            let inputY = 0;
+            
+            // Keyboard input
+            if (keys['arrowleft'] || keys['a']) inputX -= 1;
+            if (keys['arrowright'] || keys['d']) inputX += 1;
+            if (keys['arrowup'] || keys['w']) inputY += 1;
+            if (keys['arrowdown'] || keys['s']) inputY -= 1;
+            
+            // Touch input
+            if (touchControls.joystick.active) {
+                inputX += touchControls.joystick.x;
+                inputY += touchControls.joystick.y;
+            }
+            
+            // Apply movement
+            if (inputX !== 0) {
+                playerVelocity.x += inputX * acceleration;
+                playerVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, playerVelocity.x));
+            } else {
+                playerVelocity.x *= 0.9;
+            }
+            
+            if (inputY !== 0) {
+                playerVelocity.y += inputY * acceleration;
+                playerVelocity.y = Math.max(-maxSpeed, Math.min(maxSpeed, playerVelocity.y));
+            } else {
+                playerVelocity.y *= 0.9;
+            }
+            
+            // Boost system - handle both keyboard and touch input
+            const isBoosting = (keys[' '] || touchControls.boost) && boost > 0;
             if (isBoosting) {
-                boostSpeed = 1.2;
-                boost = Math.max(0, boost - 35 * delta);
-                player.thrusterParticles.children.forEach(p => {
-                    p.userData.velocity.z = Math.random() * 4 + 2;
-                    p.scale.set(1.5, 1.5, 1.5); 
-                });
+                boostSpeed = 1.5;
+                boost = Math.max(0, boost - 40 * delta);
                 if (!isBoostingSoundPlaying) {
                     sounds.boost.triggerAttack();
                     isBoostingSoundPlaying = true;
                 }
             } else {
                 boostSpeed = 0;
-                boost = Math.min(100, boost + 12 * delta);
-                player.thrusterParticles.children.forEach(p => {
-                    p.userData.velocity.z = Math.random() * 2 + 1;
-                    p.scale.set(1, 1, 1); 
-                });
+                boost = Math.min(100, boost + 15 * delta);
                 if (isBoostingSoundPlaying) {
                     sounds.boost.triggerRelease();
                     isBoostingSoundPlaying = false;
                 }
             }
 
+            // Laser firing - handle both keyboard and touch input
             if (laserCooldown > 0) laserCooldown -= delta;
-            if (keys['x'] && laserCooldown <= 0) {
+            if ((keys['x'] || touchControls.laser) && laserCooldown <= 0) {
                 fireLaser(player.position.clone());
-                laserCooldown = isTripleShotActive ? 0.1 : 0.2;
+                laserCooldown = powerUps.rapidFire ? 0.08 : (powerUps.tripleShot ? 0.12 : 0.25);
             }
 
-            // New: Rocket activation
-            if (keys['z'] && bombs > 0 && bombReady && gameState === 'playing') {
-                bombs = 0; // Use the bomb
-                bombReady = false; // Bomb is no longer ready
-                bombCooldownTimer = BOMB_USE_COOLDOWN; // Start cooldown timer
-                bombRegenTimer = 0; // Reset regen timer
-                sounds.bomb.triggerAttackRelease('2n'); // Play bomb sound (now rocket launch sound)
-                createRocket(player.position.clone()); // Launch a rocket
-                keys['z'] = false; // Prevent continuous activation
+            // Rocket firing - handle both keyboard and touch input
+            if ((keys['z'] || touchControls.rocket) && bombs > 0 && bombReady && gameState === 'playing') {
+                bombs = 0;
+                bombReady = false;
+                bombCooldownTimer = BOMB_USE_COOLDOWN;
+                bombRegenTimer = 0;
+                sounds.rocket.triggerAttackRelease('2n');
+                createRocket(player.position.clone());
+                keys['z'] = false;
+                touchControls.rocket = false; // Reset touch control
             }
             
-            player.position.x += playerVelocity.x * delta * (1 + boostSpeed);
-            player.position.y += playerVelocity.y * delta * (1 + boostSpeed);
+            // Apply movement
+            const speedMultiplier = powerUps.speedBoost ? 1.4 : 1.0;
+            player.position.x += playerVelocity.x * delta * (1 + boostSpeed) * speedMultiplier;
+            player.position.y += playerVelocity.y * delta * (1 + boostSpeed) * speedMultiplier;
             
-            const boundary = 50;
+            // Boundaries
+            const boundary = 60;
             player.position.x = Math.max(-boundary, Math.min(boundary, player.position.x));
             player.position.y = Math.max(-boundary, Math.min(boundary, player.position.y));
             
-            player.rotation.z = -(playerVelocity.x / maxSpeed) * 0.5;
-            player.rotation.y = (playerVelocity.y / maxSpeed) * 0.5;
+            // Visual effects
+            player.rotation.z = -(playerVelocity.x / maxSpeed) * 0.6;
+            player.rotation.y = (playerVelocity.y / maxSpeed) * 0.6;
             
-            let currentBaseSpeed = baseSpeed;
-            if (isSpeedBoostActive) {
-                currentBaseSpeed += SPEED_BOOST_FACTOR;
-            }
-            speed = currentBaseSpeed + boostSpeed;
+            speed = baseSpeed + boostSpeed;
 
+            // Update thruster particles
             player.thrusterParticles.children.forEach(p => {
-                p.position.z += p.userData.velocity.z * delta;
+                p.position.z += p.userData.velocity.z * delta * (isBoosting ? 2 : 1);
                 p.userData.life -= delta;
-                p.material.opacity = p.userData.life / (Math.random() * 1.5 + 0.5);
+                p.material.opacity = p.userData.life / 2;
+                p.scale.setScalar(isBoosting ? 1.8 : 1.0);
+                
                 if (p.userData.life <= 0) {
                     p.position.set(
-                        (Math.random() - 0.5) * 0.5,
-                        (Math.random() - 0.5) * 0.5,
+                        (Math.random() - 0.5) * 0.8,
+                        (Math.random() - 0.5) * 0.8,
                         0
                     );
-                    p.userData.life = Math.random() * 1.5 + 0.5;
+                    p.userData.life = Math.random() * 2 + 0.5;
                 }
             });
 
-            updateBombs(delta); // Update bomb regeneration
+            updateBombs(delta);
         }
 
         function updateBombs(delta) {
@@ -1665,7 +1958,6 @@
                 if (bombCooldownTimer > 0) {
                     bombCooldownTimer = Math.max(0, bombCooldownTimer - delta);
                 } else {
-                    // Cooldown is over, start regenerating
                     bombRegenTimer += delta;
                     if (bombRegenTimer >= BOMB_REGEN_DURATION) {
                         bombs = 1;
@@ -1676,46 +1968,24 @@
             }
         }
 
-        // Renamed from activateBomb to handle rocket explosion logic
-        function rocketExplode(rocketPosition) {
-            sounds.explosion.triggerAttackRelease("8n"); // Play explosion sound
-            createExplosion(rocketPosition.clone()); // Create visual explosion
-
-            // Clear obstacles
-            for (let i = obstacles.length - 1; i >= 0; i--) {
-                const obstacle = obstacles[i];
-                if (rocketPosition.distanceTo(obstacle.position) < ROCKET_EXPLOSION_RADIUS) {
-                    createExplosion(obstacle.position.clone());
-                    scene.remove(obstacle);
-                    obstacles.splice(i, 1);
-                    score += 50; // Award points for destroyed obstacles
-                }
-            }
-
-            // Clear alien ships
-            for (let i = alienShips.length - 1; i >= 0; i--) {
-                const alien = alienShips[i];
-                if (rocketPosition.distanceTo(alien.position) < ROCKET_EXPLOSION_RADIUS) {
-                    createExplosion(alien.position.clone());
-                    scene.remove(alien);
-                    alienShips.splice(i, 1);
-                    score += 200; // Award points for destroyed aliens
-                }
-            }
+        function updateCombo(delta) {
+            // Combo system removed
         }
 
         function updateLasers(delta) {
+            const timeMultiplier = powerUps.timeWarp ? 0.5 : 1.0;
+            
             for (let i = lasers.length - 1; i >= 0; i--) {
                 const laser = lasers[i];
                 if (laser.userData.isPlayerLaser) {
-                    laser.position.z -= 100 * delta;
-                    if (laser.position.z < player.position.z - 200) {
+                    laser.position.z -= 120 * delta;
+                    if (laser.position.z < player.position.z - 250) {
                         scene.remove(laser);
                         lasers.splice(i, 1);
                     }
                 } else {
-                    laser.position.z += ALIEN_LASER_SPEED * delta;
-                    if (laser.position.z > player.position.z + 50) {
+                    laser.position.z += 60 * delta * timeMultiplier;
+                    if (laser.position.z > player.position.z + 60) {
                         scene.remove(laser);
                         lasers.splice(i, 1);
                     }
@@ -1723,30 +1993,14 @@
             }
         }
 
-        // New: Update rockets
         function updateRockets(delta) {
             for (let i = rockets.length - 1; i >= 0; i--) {
                 const rocket = rockets[i];
                 rocket.position.z -= ROCKET_SPEED * delta;
                 rocket.userData.distanceTraveled = rocket.userData.initialZ - rocket.position.z;
 
-                // Update rocket thruster particles
-                rocket.thrusterParticles.children.forEach(p => {
-                    p.position.z += p.userData.velocity.z * delta;
-                    p.userData.life -= delta;
-                    p.material.opacity = p.userData.life / (Math.random() * 0.5 + 0.2);
-                    if (p.userData.life <= 0) {
-                        p.position.set(
-                            (Math.random() - 0.5) * 0.2,
-                            (Math.random() - 0.5) * 0.2,
-                            0
-                        );
-                        p.userData.life = Math.random() * 0.5 + 0.2;
-                    }
-                });
-
                 if (rocket.userData.distanceTraveled >= ROCKET_FUSE_DISTANCE) {
-                    rocketExplode(rocket.position.clone()); // Explode the rocket
+                    rocketExplode(rocket.position.clone());
                     scene.remove(rocket);
                     rockets.splice(i, 1);
                 }
@@ -1754,97 +2008,58 @@
         }
 
         function updateAlienShips(delta) {
+            const timeMultiplier = powerUps.timeWarp ? 0.3 : 1.0;
+            
             currentAlienSpawnTimer -= delta;
-            if (currentAlienSpawnTimer <= 0) {
-                const numAliensToSpawn = 1 + Math.floor(Math.random() * 2); // Spawn 1 to 3 aliens
-                for (let i = 0; i < numAliensToSpawn; i++) {
-                    const spawnZ = player.position.z - 400 - Math.random() * 200;
-                    // Slightly offset multiple aliens spawned at once
-                    const offsetX = (Math.random() - 0.5) * 20; 
-                    const offsetY = (Math.random() - 0.5) * 20;
-
-                    const alienTypeRoll = Math.random();
-                    if (alienTypeRoll < 0.4) { // 40% chance for Type 1 alien
-                        createAlienShip(spawnZ + i * 10); 
-                    } else if (alienTypeRoll < 0.7) { // 30% chance for Type 2 alien (0.4 to 0.7)
-                        createAlienShipType2(spawnZ + i * 10);
-                    } else if (alienTypeRoll < 0.9) { // 20% chance for Type 3 alien (0.7 to 0.9)
-                        createAlienShipType3(spawnZ + i * 10);
-                    } else { // 10% chance for Type 4 alien (0.9 to 1.0)
-                        createAlienShipType4(spawnZ + i * 10);
-                    }
-                    alienShips[alienShips.length - 1].position.x += offsetX;
-                    alienShips[alienShips.length - 1].position.y += offsetY;
+            if (currentAlienSpawnTimer <= 0 && enemiesInWave < waveNumber * 3 + 5) {
+                const numAliens = Math.min(1 + Math.floor(Math.random() * 2), (waveNumber * 3 + 5) - enemiesInWave);
+                for (let i = 0; i < numAliens; i++) {
+                    const spawnZ = player.position.z - 500 - Math.random() * 300;
+                    createAlienShip(spawnZ + i * 15);
                 }
-                currentAlienSpawnTimer = alienSpawnCooldown + Math.random() * 5;
+                currentAlienSpawnTimer = alienSpawnCooldown + Math.random() * 6;
             }
 
             for (let i = alienShips.length - 1; i >= 0; i--) {
                 const alien = alienShips[i];
-                
-                // Apply speed factor for different alien types
-                const alienMoveSpeedFactor = alien.userData.speedFactor || 1; // Default to 1 if not defined
-                alien.position.z += (speed * delta * 5 * alienMoveSpeedFactor);
+                alien.position.z += speed * delta * 6 * timeMultiplier;
                 
                 const targetX = player.position.x + alien.userData.targetOffset.x;
                 const targetY = player.position.y + alien.userData.targetOffset.y;
-                // Apply approach speed factor for different alien types
-                const approachSpeedFactor = alien.userData.approachSpeedFactor !== undefined ? alien.userData.approachSpeedFactor : 0.1; // Default to 0.1
-                const approachSpeed = 5 * delta;
-                alien.position.x += (targetX - alien.position.x) * approachSpeed * approachSpeedFactor;
-                alien.position.y += (targetY - alien.position.y) * approachSpeed * approachSpeedFactor;
+                const approachSpeed = 6 * delta * timeMultiplier;
+                alien.position.x += (targetX - alien.position.x) * approachSpeed * 0.1;
+                alien.position.y += (targetY - alien.position.y) * approachSpeed * 0.1;
 
-                alien.thrusterParticles.children.forEach(p => {
-                    p.position.z += p.userData.velocity.z * delta;
-                    p.userData.life -= delta;
-                    p.material.opacity = p.userData.life / (Math.random() * 1 + 0.2);
-                    if (p.userData.life <= 0) {
-                        p.position.set(
-                            (Math.random() - 0.5) * 0.2,
-                            (Math.random() - 0.5) * 0.2,
-                            0
-                        );
-                        p.userData.life = Math.random() * 1 + 0.2;
-                    }
-                });
-
-                alien.userData.shootCooldown -= delta;
-                if (alien.userData.shootCooldown <= 0 && alien.position.z > player.position.z - 100) {
-                    // Pass alien's specific laser color
-                    fireLaser(alien.position.clone(), false, alien.userData.laserColor || 0x00ffff); 
-                    // Adjust cooldown based on alien type
-                    if (alien.userData.health === ALIEN_TYPE2_HEALTH) {
-                        alien.userData.shootCooldown = ALIEN_TYPE2_SHOOT_COOLDOWN + Math.random() * 1;
-                    } else if (alien.userData.health === ALIEN_TYPE3_HEALTH) {
-                        alien.userData.shootCooldown = ALIEN_TYPE3_SHOOT_COOLDOWN + Math.random() * 0.5;
-                    } else if (alien.userData.health === ALIEN_TYPE4_HEALTH) {
-                        alien.userData.shootCooldown = ALIEN_TYPE4_SHOOT_COOLDOWN + Math.random() * 1.5;
-                    } else {
-                        alien.userData.shootCooldown = ALIEN_SHOOT_COOLDOWN + Math.random() * 1;
-                    }
+                alien.userData.shootCooldown -= delta * timeMultiplier;
+                if (alien.userData.shootCooldown <= 0 && alien.position.z > player.position.z - 120) {
+                    fireLaser(alien.position.clone(), false);
+                    alien.userData.shootCooldown = (2.5 + Math.random() * 1.5) / timeMultiplier;
                 }
 
-                if (alien.position.z > player.position.z + 50) {
+                if (alien.position.z > player.position.z + 60) {
                     scene.remove(alien);
                     alienShips.splice(i, 1);
                 }
             }
         }
-        
+
         function updateCollisions() {
             if (explosionSoundCooldown > 0) {
                 explosionSoundCooldown -= clock.getDelta();
             }
 
+            // Player vs obstacles
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const obstacle = obstacles[i];
-                if (player.position.distanceTo(obstacle.position) < 2.5) {
+                if (player.position.distanceTo(obstacle.position) < 3.0) {
                     if (isShieldActive) {
                         sounds.damage.triggerAttackRelease('C3', '8n');
                     } else {
-                        health -= 25;
+                        health -= 30;
                         sounds.damage.triggerAttackRelease('A1', '8n');
-                        applyCameraShake(0.5, 200);
+                        applyCameraShake(0.6, 250);
+                        resetStreak();
+                        perfectWave = false;
                         if (health <= 0) { health = 0; gameOver(); }
                     }
                     createExplosion(obstacle.position);
@@ -1853,37 +2068,93 @@
                 }
             }
             
+            // Magnetic field effect
+            if (powerUps.magneticField) {
+                collectibles.forEach(collectible => {
+                    const distance = player.position.distanceTo(collectible.position);
+                    if (distance < 25) {
+                        const direction = new THREE.Vector3().subVectors(player.position, collectible.position).normalize();
+                        collectible.position.add(direction.multiplyScalar(0.8));
+                    }
+                });
+            }
+            
+            // Player vs collectibles
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 const collectible = collectibles[i];
-                if (player.position.distanceTo(collectible.position) < 2) {
+                if (player.position.distanceTo(collectible.position) < 2.5) {
                     sounds.powerup.triggerAttackRelease('C6', '16n');
+                    
                     switch (collectible.userData.collectibleType) {
                         case 'shield':
                             isShieldActive = true;
                             player.shieldVisual.visible = true;
                             sounds.shield.triggerAttackRelease('G5', '4n');
                             clearTimeout(shieldTimeout);
-                            shieldTimeout = setTimeout(() => { isShieldActive = false; player.shieldVisual.visible = false; }, 5000);
+                            shieldTimeout = setTimeout(() => { 
+                                isShieldActive = false; 
+                                player.shieldVisual.visible = false; 
+                            }, 6000);
+                            showPowerUpIndicator('Shield Active!');
                             break;
+                            
                         case 'health':
-                            health = Math.min(100, health + HEALTH_PACK_AMOUNT);
+                            health = Math.min(100, health + 35);
                             break;
+                            
                         case 'boost':
                             boost = 100;
                             break;
+                            
                         case 'tripleShot':
-                            isTripleShotActive = true;
-                            if (tripleShotTimeout) clearTimeout(tripleShotTimeout);
-                            tripleShotTimeout = setTimeout(() => { isTripleShotActive = false; }, TRIPLE_SHOT_DURATION * 1000);
+                            powerUps.tripleShot = true;
+                            if (powerUpTimers.tripleShot) clearTimeout(powerUpTimers.tripleShot);
+                            powerUpTimers.tripleShot = setTimeout(() => { 
+                                powerUps.tripleShot = false; 
+                            }, 8000);
+                            showPowerUpIndicator('Triple Shot!');
                             break;
+                            
                         case 'speedBoost':
-                            isSpeedBoostActive = true;
-                            if (speedBoostTimeout) clearTimeout(speedBoostTimeout);
-                            speedBoostTimeout = setTimeout(() => { isSpeedBoostActive = false; }, SPEED_BOOST_DURATION * 1000);
+                            powerUps.speedBoost = true;
+                            if (powerUpTimers.speedBoost) clearTimeout(powerUpTimers.speedBoost);
+                            powerUpTimers.speedBoost = setTimeout(() => { 
+                                powerUps.speedBoost = false; 
+                            }, 6000);
+                            showPowerUpIndicator('Speed Boost!');
                             break;
+                            
+                        case 'rapidFire':
+                            powerUps.rapidFire = true;
+                            if (powerUpTimers.rapidFire) clearTimeout(powerUpTimers.rapidFire);
+                            powerUpTimers.rapidFire = setTimeout(() => { 
+                                powerUps.rapidFire = false; 
+                            }, 7000);
+                            showPowerUpIndicator('Rapid Fire!');
+                            break;
+
+                        case 'magneticField':
+                            powerUps.magneticField = true;
+                            if (powerUpTimers.magneticField) clearTimeout(powerUpTimers.magneticField);
+                            powerUpTimers.magneticField = setTimeout(() => { 
+                                powerUps.magneticField = false; 
+                            }, 10000);
+                            showPowerUpIndicator('Magnetic Field!');
+                            break;
+
+                        case 'timeWarp':
+                            powerUps.timeWarp = true;
+                            if (powerUpTimers.timeWarp) clearTimeout(powerUpTimers.timeWarp);
+                            powerUpTimers.timeWarp = setTimeout(() => { 
+                                powerUps.timeWarp = false; 
+                            }, 5000);
+                            showPowerUpIndicator('Time Warp!');
+                            break;
+                            
                         case 'crystal':
                         default:
-                            score += 150;
+                            const crystalScore = 200;
+                            score += crystalScore;
                             sounds.collect.triggerAttackRelease('C5', '8n');
                             break;
                     }
@@ -1892,14 +2163,16 @@
                 }
             }
 
+            // Laser collisions
             for (let i = lasers.length - 1; i >= 0; i--) {
                 const laser = lasers[i];
                 let laserHit = false;
 
                 if (laser.userData.isPlayerLaser) {
+                    // Player lasers vs obstacles
                     for (let j = obstacles.length - 1; j >= 0; j--) {
                         const obstacle = obstacles[j];
-                        if (laser.position.distanceTo(obstacle.position) < 3) {
+                        if (laser.position.distanceTo(obstacle.position) < 3.5) {
                             createExplosion(obstacle.position);
                             scene.remove(obstacle);
                             obstacles.splice(j, 1);
@@ -1907,62 +2180,66 @@
                             scene.remove(laser);
                             lasers.splice(i, 1);
                             
-                            score += 50;
+                            score += 75;
+                            addKill();
                             laserHit = true;
                             break;
                         }
                     }
-                }
-                if(laserHit) continue;
-
-                if (laser.userData.isPlayerLaser) {
-                    for (let j = alienShips.length - 1; j >= 0; j--) {
-                        const alien = alienShips[j];
-                        if (laser.position.distanceTo(alien.position) < 2.5) {
-                            alien.userData.health--;
-                            if (alien.userData.health <= 0) {
-                                createExplosion(alien.position);
-                                scene.remove(alien);
-                                alienShips.splice(j, 1);
-                                score += 200;
+                    
+                    if (!laserHit) {
+                        // Player lasers vs aliens
+                        for (let j = alienShips.length - 1; j >= 0; j--) {
+                            const alien = alienShips[j];
+                            if (laser.position.distanceTo(alien.position) < 3.0) {
+                                alien.userData.health--;
+                                if (alien.userData.health <= 0) {
+                                    createExplosion(alien.position);
+                                    scene.remove(alien);
+                                    alienShips.splice(j, 1);
+                                    score += alien.userData.scoreValue;
+                                    addKill();
+                                }
+                                
+                                scene.remove(laser);
+                                lasers.splice(i, 1);
+                                laserHit = true;
+                                break;
                             }
-                            
-                            scene.remove(laser);
-                            lasers.splice(i, 1);
-                            laserHit = true;
-                            break;
                         }
                     }
-                }
-                if(laserHit) continue;
-
-                if (!laser.userData.isPlayerLaser) {
-                    if (player.position.distanceTo(laser.position) < 2) {
+                } else {
+                    // Alien lasers vs player
+                    if (player.position.distanceTo(laser.position) < 2.5) {
                         if (isShieldActive) {
                             sounds.damage.triggerAttackRelease('C3', '8n');
                         } else {
-                            health -= 15;
+                            health -= 20;
                             sounds.damage.triggerAttackRelease('A1', '8n');
-                            applyCameraShake(0.3, 150);
+                            applyCameraShake(0.4, 200);
+                            resetStreak();
+                            perfectWave = false;
                             if (health <= 0) { health = 0; gameOver(); }
                         }
                         scene.remove(laser);
                         lasers.splice(i, 1);
                         laserHit = true;
-                        break;
                     }
                 }
             }
 
+            // Player vs aliens (collision)
             for (let i = alienShips.length - 1; i >= 0; i--) {
                 const alien = alienShips[i];
-                if (player.position.distanceTo(alien.position) < 3) {
+                if (player.position.distanceTo(alien.position) < 3.5) {
                     if (isShieldActive) {
                         sounds.damage.triggerAttackRelease('C3', '8n');
                     } else {
-                        health -= 50;
+                        health -= 60;
                         sounds.damage.triggerAttackRelease('A1', '8n');
-                        applyCameraShake(0.8, 300);
+                        applyCameraShake(1.0, 400);
+                        resetStreak();
+                        perfectWave = false;
                         if (health <= 0) { health = 0; gameOver(); }
                     }
                     createExplosion(alien.position);
@@ -1974,121 +2251,168 @@
         }
         
         function updateEnvironment(delta) {
-            const moveDistance = speed * delta * 20;
-            distance += moveDistance / 100;
+            const moveDistance = speed * delta * 25;
+            distance += moveDistance / 120;
+            
             if (player) {
                 player.position.z -= moveDistance;
             }
             
+            // Update starfields with time warp effect
+            const starTimeMultiplier = powerUps.timeWarp ? 0.4 : 1.0;
             starfieldLayers.forEach(layer => {
-                layer.position.z += moveDistance * layer.userData.speedFactor;
-            });
-
-            nebulaPlanes.forEach(nebula => {
-                nebula.position.z += moveDistance * 0.01;
-                if (nebula.position.z > (player ? player.position.z : 0) + 500) {
-                    nebula.position.z = (player ? player.position.z : 0) - 1500 - Math.random() * 500;
-                    nebula.position.x = (Math.random() - 0.5) * 1500;
-                    nebula.position.y = (Math.random() - 0.5) * 1200;
+                layer.position.z += moveDistance * layer.userData.speedFactor * starTimeMultiplier;
+                if (layer.position.z > (player ? player.position.z : 0) + 1000) {
+                    layer.position.z -= 4000;
                 }
             });
 
-            const distantFieldRecycleDistance = 1000;
+            // Update nebulae
+            nebulaPlanes.forEach(nebula => {
+                nebula.position.z += moveDistance * 0.008 * starTimeMultiplier;
+                nebula.rotation.z += nebula.userData.rotationSpeed * starTimeMultiplier;
+                
+                if (nebula.position.z > (player ? player.position.z : 0) + 800) {
+                    nebula.position.z = (player ? player.position.z : 0) - 2000 - Math.random() * 1000;
+                    nebula.position.x = (Math.random() - 0.5) * 2000;
+                    nebula.position.y = (Math.random() - 0.5) * 1500;
+                }
+            });
+
+            // Update distant asteroid fields
             distantAsteroidFields = distantAsteroidFields.filter(field => {
-                field.position.z += moveDistance * 0.005;
+                field.position.z += moveDistance * 0.004 * starTimeMultiplier;
                 field.children.forEach(asteroid => {
-                    asteroid.rotation.x += asteroid.userData.rotationSpeed.x;
-                    asteroid.rotation.y += asteroid.userData.rotationSpeed.y;
-                    asteroid.rotation.z += asteroid.userData.rotationSpeed.z;
+                    asteroid.rotation.x += asteroid.userData.rotationSpeed.x * starTimeMultiplier;
+                    asteroid.rotation.y += asteroid.userData.rotationSpeed.y * starTimeMultiplier;
+                    asteroid.rotation.z += asteroid.userData.rotationSpeed.z * starTimeMultiplier;
                 });
 
-                if (field.position.z > (player ? player.position.z : 0) + distantFieldRecycleDistance) {
+                if (field.position.z > (player ? player.position.z : 0) + 1200) {
                     scene.remove(field);
                     return false;
                 }
                 return true;
             });
 
-            if (distantAsteroidFields.length < 3 && Math.random() > 0.995) {
-                createDistantAsteroidField((player ? player.position.z : 0) - 2000 - Math.random() * 1000, 50, 500);
+            // Spawn new distant asteroid fields occasionally
+            if (distantAsteroidFields.length < 4 && Math.random() > 0.997) {
+                createDistantAsteroidField(
+                    (player ? player.position.z : 0) - 2500 - Math.random() * 1000,
+                    60 + Math.random() * 80,
+                    600 + Math.random() * 400
+                );
             }
 
+            // Update planets
+            distantPlanets.forEach(planet => {
+                planet.position.z += moveDistance * 0.008 * starTimeMultiplier;
+                planet.rotation.y += planet.userData.rotationSpeed * starTimeMultiplier;
+                if (planet.position.z > (player ? player.position.z : 0) + 1500) {
+                    planet.position.z = (player ? player.position.z : 0) - 3000 - Math.random() * 1000;
+                    planet.position.x = (Math.random() - 0.5) * 2000;
+                    planet.position.y = (Math.random() - 0.5) * 1500;
+                }
+            });
+
+            // Rotate objects with time warp effect
             obstacles.forEach(o => {
-                o.rotation.x += o.userData.rotationSpeed.x;
-                o.rotation.y += o.userData.rotationSpeed.y;
-                o.rotation.z += o.userData.rotationSpeed.z;
+                o.rotation.x += o.userData.rotationSpeed.x * starTimeMultiplier;
+                o.rotation.y += o.userData.rotationSpeed.y * starTimeMultiplier;
+                o.rotation.z += o.userData.rotationSpeed.z * starTimeMultiplier;
             });
 
-            collectibles.forEach(c => { // Rotate collectibles
-                c.rotation.x += c.userData.rotationSpeed.x;
-                c.rotation.y += c.userData.rotationSpeed.y;
-                c.rotation.z += c.userData.rotationSpeed.z;
+            collectibles.forEach(c => {
+                c.rotation.x += c.userData.rotationSpeed.x * starTimeMultiplier;
+                c.rotation.y += c.userData.rotationSpeed.y * starTimeMultiplier;
+                c.rotation.z += c.userData.rotationSpeed.z * starTimeMultiplier;
             });
 
-            // Spawning random asteroids independently (more frequent)
-            randomAsteroidSpawnTimer -= delta;
-            if (randomAsteroidSpawnTimer <= 0) {
-                createRandomAsteroid(player.position.z - 200 - Math.random() * 100); // Spawn ahead of player
-                randomAsteroidSpawnTimer = RANDOM_ASTEROID_SPAWN_INTERVAL + Math.random() * 0.02; // Randomize interval (even more frequent)
-            }
-
-            // Spawning random power-ups independently (more frequent, includes crystals)
-            powerupSpawnTimer -= delta;
-            if (powerupSpawnTimer <= 0) {
-                spawnRandomPowerup(player.position.z - 200 - Math.random() * 100); // Spawn ahead of player
-                powerupSpawnTimer = POWERUP_SPAWN_INTERVAL + Math.random() * 0.3; // Randomize interval (even more frequent)
+            // Spawn new objects with wave scaling
+            const obstacleSpawnRate = 0.08 + (waveNumber * 0.01);
+            const collectibleSpawnRate = 0.03 + (waveNumber * 0.005);
+            
+            if (Math.random() < obstacleSpawnRate) {
+                createRandomAsteroid(player.position.z - 250 - Math.random() * 150);
             }
             
-            // Filter out objects that are too far behind the player (recycle them)
-            const recycleThresholdZ = player.position.z + 50; // Objects 50 units behind the player
+            if (Math.random() < collectibleSpawnRate) {
+                spawnRandomCollectible(player.position.z - 250 - Math.random() * 150);
+            }
+            
+            // Remove distant objects
+            const recycleThreshold = player.position.z + 80;
             
             obstacles = obstacles.filter(o => {
-                if (o.position.z > recycleThresholdZ) {
+                if (o.position.z > recycleThreshold) {
                     scene.remove(o);
                     return false;
                 }
                 return true;
             });
+            
             collectibles = collectibles.filter(c => {
-                if (c.position.z > recycleThresholdZ) {
+                if (c.position.z > recycleThreshold) {
                     scene.remove(c);
                     return false;
                 }
                 return true;
             });
-            alienShips = alienShips.filter(a => { 
-                if (a.position.z > recycleThresholdZ) {
+            
+            alienShips = alienShips.filter(a => {
+                if (a.position.z > recycleThreshold) {
                     scene.remove(a);
                     return false;
                 }
                 return true;
             });
-            rockets = rockets.filter(r => { 
-                if (r.position.z > recycleThresholdZ) {
+            
+            rockets = rockets.filter(r => {
+                if (r.position.z > recycleThreshold) {
                     scene.remove(r);
                     return false;
                 }
                 return true;
             });
             
-            baseSpeed = Math.min(2.5, 0.8 + distance * 0.0015);
+            // Increase base speed over time with wave scaling
+            baseSpeed = Math.min(3.5, 1.0 + distance * 0.002 + (waveNumber * 0.1));
 
+            // Update dynamic lighting with enhanced effects
             if (dynamicLight && player) {
-                dynamicLight.position.x = player.position.x + Math.sin(distance * 0.01) * 50;
-                dynamicLight.position.y = player.position.y + Math.cos(distance * 0.005) * 50 + 20;
-                dynamicLight.position.z = player.position.z - 50;
+                const lightIntensity = powerUps.timeWarp ? 1.5 : 1.0;
+                dynamicLight.intensity = lightIntensity;
+                
+                dynamicLight.position.x = player.position.x + Math.sin(distance * 0.015) * 60;
+                dynamicLight.position.y = player.position.y + Math.cos(distance * 0.008) * 60 + 25;
+                dynamicLight.position.z = player.position.z - 60;
 
-                const orbitRadius = 70;
-                const orbitSpeed = 0.002;
+                const orbitRadius = 90;
+                const orbitSpeed = 0.003;
                 secondaryDynamicLight.position.x = player.position.x + Math.sin(distance * orbitSpeed) * orbitRadius;
-                secondaryDynamicLight.position.y = player.position.y + Math.cos(distance * orbitSpeed * 0.7) * orbitRadius * 0.5 + 10;
-                secondaryDynamicLight.position.z = player.position.z - 80;
+                secondaryDynamicLight.position.y = player.position.y + Math.cos(distance * orbitSpeed * 0.8) * orbitRadius * 0.6 + 15;
+                secondaryDynamicLight.position.z = player.position.z - 100;
+                
+                // Change light colors based on power-ups
+                if (powerUps.timeWarp) {
+                    dynamicLight.color.setHex(0x00ffff);
+                    secondaryDynamicLight.color.setHex(0xff00ff);
+                } else if (powerUps.magneticField) {
+                    dynamicLight.color.setHex(0x8800ff);
+                } else {
+                    dynamicLight.color.setHex(0xffccaa);
+                    secondaryDynamicLight.color.setHex(0xaaffcc);
+                }
             }
+
+            updateWaveSystem();
+            checkAchievements();
         }
         
         function updateUI() {
             document.getElementById('score').textContent = Math.floor(score);
             document.getElementById('distance').textContent = Math.floor(distance);
+            document.getElementById('wave').textContent = waveNumber;
             document.getElementById('healthBar').style.width = health + '%';
             document.getElementById('boostBar').style.width = boost + '%';
             
@@ -2099,19 +2423,28 @@
                 bombStatusElement.textContent = 'Ready';
                 bombRegenBar.style.width = '100%';
             } else if (bombCooldownTimer > 0) {
-                bombStatusElement.textContent = `Cooling Down (${Math.ceil(bombCooldownTimer)}s)`;
-                bombRegenBar.style.width = '0%'; // No progress during cooldown
+                bombStatusElement.textContent = `Cooling (${Math.ceil(bombCooldownTimer)}s)`;
+                bombRegenBar.style.width = '0%';
             } else {
-                bombStatusElement.textContent = `Regenerating...`;
+                bombStatusElement.textContent = `Charging...`;
                 const progress = (bombRegenTimer / BOMB_REGEN_DURATION) * 100;
                 bombRegenBar.style.width = `${progress}%`;
+            }
+            
+            // Update health bar color based on health level
+            const healthBar = document.getElementById('healthBar');
+            if (health > 60) {
+                healthBar.style.background = 'linear-gradient(90deg, #33ff66, #66ff99)';
+            } else if (health > 30) {
+                healthBar.style.background = 'linear-gradient(90deg, #ffaa33, #ffcc66)';
+            } else {
+                healthBar.style.background = 'linear-gradient(90deg, #ff3333, #ff6666)';
             }
         }
         
         function animate() {
-            if (gameState !== 'playing') { // Only animate if game is playing
-                return;
-            }
+            if (gameState !== 'playing') return;
+            
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
             
@@ -2119,23 +2452,23 @@
                 updatePlayer(delta);
                 updateEnvironment(delta);
                 updateLasers(delta);
-                updateRockets(delta); // New: Update rockets
+                updateRockets(delta);
                 updateAlienShips(delta);
                 updateCollisions();
                 updateUI();
                 
-                const cameraLag = 0.08; 
+                // Enhanced camera movement
+                const cameraLag = 0.06;
                 camera.position.x += (player.position.x - camera.position.x) * cameraLag;
-                camera.position.y += (player.position.y + 5 - camera.position.y) * cameraLag;
-                camera.position.z = player.position.z + 25;
-                camera.lookAt(player.position.x, player.position.y, player.position.z - 30);
+                camera.position.y += (player.position.y + 8 - camera.position.y) * cameraLag;
+                camera.position.z = player.position.z + 30;
+                camera.lookAt(player.position.x, player.position.y, player.position.z - 40);
                 
+                // Camera shake
                 if (cameraShakeIntensity > 0) {
                     camera.position.x += (Math.random() - 0.5) * cameraShakeIntensity;
                     camera.position.y += (Math.random() - 0.5) * cameraShakeIntensity;
                 }
-            } else {
-                console.warn("Player object not yet initialized in animate loop. Skipping updates.");
             }
 
             renderer.render(scene, camera);
@@ -2147,10 +2480,9 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        // Initialize on load
         window.onload = function() {
-            // Removed init() call from here. init() will now only be called by startGame() or restartGame()
             document.querySelector('[data-type="rocket"]').click();
-            console.log("Window loaded, default character selected.");
         };
     </script>
 </body>
